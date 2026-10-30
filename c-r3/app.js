@@ -45,11 +45,32 @@
       m.variants.map(([c, rot, hp, f, r, fi]) => `<tr><td>${sku(m.designation + (c === "-" ? "" : c))}</td><td>${rot}</td><td>${hp}</td><td>${f}</td><td>${r}</td><td>${fi}-пальцевая</td></tr>`).join("") + `</tbody></table>` : "";
     return `<table class="stab"><tbody>${rows}</tbody></table>${vars}`;
   }
+  // One shared «coming soon» illustration: a marine drive line (engine, clutch, reverse gear, shafting) drawn as a
+  // blueprint, with a label. Used where no photo or factory drawing exists yet. Not a drawing of any real unit.
+  function soonArt(label) {
+    return `<svg class="soon-art" viewBox="0 0 600 340" role="img" aria-label="${esc(label)}">
+      <defs><pattern id="sg" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#e4e0d6" stroke-width="1"/></pattern></defs>
+      <rect width="600" height="340" fill="url(#sg)"/>
+      <g class="sa-line">
+        <path class="sa-axis" d="M20 182H585"/>
+        <rect x="40" y="112" width="160" height="124" rx="4"/><path d="M58 112V92h28v20M98 112V92h28v20M138 112V92h28v20M178 112V96h12v16"/>
+        <path d="M54 150h132M54 170h132M54 190h132" class="sa-thin"/>
+        <rect x="200" y="128" width="34" height="108" rx="3"/><path d="M206 140v84M228 140v84" class="sa-thin"/>
+        <rect x="234" y="118" width="128" height="122" rx="6"/>
+        <circle cx="278" cy="166" r="26" class="sa-dash"/><circle cx="320" cy="200" r="30" class="sa-dash"/><circle cx="278" cy="166" r="6"/><circle cx="320" cy="200" r="6"/>
+        <path d="M362 182h178"/><rect x="430" y="172" width="22" height="20"/>
+        <path d="M548 182c10-34 26-44 30-38s-14 30-30 38c22-4 34 6 28 12s-24-4-28-12c-4 22-18 36-24 30s4-24 24-30z"/>
+      </g>
+      <g class="sa-tags"><text x="120" y="262">Двигатель</text><text x="217" y="262">Муфта</text><text x="298" y="262">Реверс-редуктор</text><text x="490" y="214">Валопровод</text></g>
+      <g class="sa-badge"><rect x="180" y="20" width="240" height="40" rx="3"/><text x="300" y="46">${esc(label)}</text></g>
+    </svg>`;
+  }
+
   // «Наша продукция» per Dmitry 2026-10-29: РР-300, 3Д6, 3Д12, муфта сцепления МС, гидравлический NEW (в разработке)
   const PRODUCT_IDS = ["rr300", "3d6", "3d12"];
   const extraCards = () => `
       <article class="mcard" id="model-mufta-ms">
-        <a class="mcard-pic is-type" href="#katalog/mufta-ms" tabindex="-1" aria-hidden="true"><span>МС</span></a>
+        <a class="mcard-pic is-soon" href="#katalog/mufta-ms" tabindex="-1" aria-hidden="true">${soonArt("Фото готовится")}</a>
         <div class="mcard-body">
           <p class="mcard-kind">Муфта сцепления</p>
           <h3 class="mcard-h"><a href="#katalog/mufta-ms">Муфта сцепления МС</a></h3>
@@ -58,11 +79,11 @@
         </div>
       </article>
       <article class="mcard mcard-new" id="model-new">
-        <div class="mcard-pic is-type" aria-hidden="true"><span>NEW</span></div>
+        <div class="mcard-pic is-soon" aria-hidden="true">${soonArt("Новая модель · скоро")}</div>
         <div class="mcard-body">
-          <p class="mcard-kind">Гидравлический реверс-редуктор</p>
-          <h3 class="mcard-h">Реверс-редуктор гидравлический NEW <span class="badge">Скоро · в разработке</span></h3>
-          <p class="mcard-app">Новая модель находится в разработке. Характеристики появятся на сайте позже.</p>
+          <p class="mcard-kind">Новая разработка</p>
+          <h3 class="mcard-h">Гидравлический реверс-редуктор <span class="badge">В разработке</span></h3>
+          <p class="mcard-app">Новая модель в линейке ООО «Дело». Характеристики и сроки выпуска сообщим по запросу.</p>
           <p class="mcard-btns"><a class="btn btn-line btn-sm" href="#kontakty">Узнать о сроках</a></p>
         </div>
       </article>`;
