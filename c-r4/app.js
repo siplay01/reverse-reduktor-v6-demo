@@ -67,7 +67,7 @@
   }
 
   // «Наша продукция» per Dmitry 2026-10-29: РР-300, 3Д6, 3Д12, муфта сцепления МС, гидравлический NEW (в разработке)
-  const PRODUCT_IDS = ["rr300", "3d6", "3d12"];
+  const PRODUCT_IDS = ["rr300", "rr238", "3d6", "3d12"]; // r4: РР-238 back (Dmitry: it was missing)
   const extraCards = () => `
       <article class="mcard" id="model-mufta-ms">
         <a class="mcard-pic is-soon" href="#katalog/mufta-ms" tabindex="-1" aria-hidden="true">${soonArt("Фото готовится")}</a>
@@ -127,11 +127,12 @@
   // «Запасные части» per Dmitry 2026-10-29: four catalogs, РР-238 not listed
   const CATS = [
     { slug: "rr-300", short: "РР-300", title: "Для реверс-редуктора гидравлического РР-300", note: "26 узлов с чертежами и спецификациями" },
+    { slug: "rr-238", short: "РР-238", title: "Для реверс-редуктора гидравлического РР-238", note: `${D.parts.rr238.length} позиции` },
     { slug: "3d6", short: "3Д6", title: "Для реверс-редуктора механического 3Д6", note: `${D.parts["3d6"].length} позиций по группам` },
     { slug: "3d12", short: "3Д12", title: "Для реверс-редуктора механического 3Д12", note: `${D.parts["3d12"].length} позиций по группам` },
     { slug: "mufta-ms", short: "Муфта МС", title: "Для муфты сцепления", note: "гидравлическая СБ525-01-14, механическая СБ1226-00-2" },
   ];
-  const CAT_MODELS = ["rr300", "3d6", "3d12"];
+  const CAT_MODELS = ["rr300", "rr238", "3d6", "3d12"];
   function bar(m, key) {
     const vs = m ? viewsOf(m) : [], cur = m ? m.slug : "mufta-ms";
     return `<div class="cat-bar" role="search">
