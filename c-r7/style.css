@@ -635,3 +635,7 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .ar-a .btn-sm { min-height: 34px; padding: 6px 12px; font-size: 12px; }
 .ar-soon .ar-t { color: var(--sub); }
 @media (max-width: 800px) { .ar-list li { grid-template-columns: 22px 1fr; } .ar-p, .ar-f, .ar-a { grid-column: 2; } .ar-a { justify-content: flex-start; } .docs7-link { grid-template-columns: 1fr auto; } .docs7-s { grid-column: 1; } .docs7-go { grid-row: 1 / span 2; grid-column: 2; align-self: center; } }
+.sv5-n { margin-top: 26px; }
+.sv5 li { justify-content: flex-start; }
+.ar-list li { grid-template-columns: 22px minmax(0, 1fr) 10em 10em 17em; }
+@media (max-width: 800px) { .ar-list li { grid-template-columns: 22px 1fr; } }
