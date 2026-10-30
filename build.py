@@ -88,6 +88,9 @@ data = {
                # 3Д6: old Tilda store photo (reconstruction/media/images/tilda-img/fe053e94e613210e.jpg), owner's revers-remont.ru mark
                "3d6": "../assets/3d6-store-548.webp"},
     "models": out_models, "parts": out_parts, "section": section, "nodes": out_nodes,
+    # revision 3: unit prices from the old store (2025 price list) by designation, and the РР-300 catalog scans for the archive
+    "prices": {p["designation"]: p["price"] for p in parts if p.get("price")},
+    "scans": [{"n": x["n"], "title": x["title"], "t": asset(x["t"]["src"]), "f": asset(x["f"]["src"])} for x in load("scans.json")],
 }
 
 ASSETS.mkdir(exist_ok=True)
