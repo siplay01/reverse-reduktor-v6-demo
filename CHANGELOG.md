@@ -176,3 +176,13 @@ Start: copy of `c-r14/` (tag `before-c-r15`). Dmitry: the hero is right and stay
 - Unchanged: hero (r14), services, documentation header.
 Checks: `node qa/test-c-r15.cjs`, `-catalog.cjs`, `-gears.cjs`, axe 0 violations on 4 pages, 10-page x 10-width sweep (Chromium and WebKit) without overflow or errors.
 Rollback: `git rm -r c-r15` or `git checkout before-c-r15 -- .`
+
+## 2026-10-29 · C revision 16 (`c-r16/`), manuals in the documentation archive
+
+Start: copy of `c-r15/` (tag `before-c-r16`). Dmitry: the books are public operating documents supplied with the equipment; publish them.
+- «Техническая документация» → «Руководства по эксплуатации»: two new rows with PDF files copied to `assets/`: `3d6-7d6-sudovye-dizeli-1972.pdf` (88 scanned pages, 21,2 MB; «Реверс-редуктор» opens at PDF page 25) and `d12-rukovodstvo-po-ekspluatacii.pdf` (235 scanned pages, 11,6 MB; «Реверс-редуктор» opens at page 103). Product tags 3Д6 and 3Д12.
+- Under the section drawings on the 3Д6 and 3Д12 pages: link «Чертёж в руководстве (PDF)» to the figure page (3Д6 book PDF p.28, Д12 РЭ p.104).
+- Not added: the 3-page «Сборка разборка редуктора РР-300» (97 percent the same text as РР-300.РЭ, with typing errors) and the catalog СКО (industry catalog, none of our products). Both are in Downloads.
+- The Д12 file has a third-party library stamp on its first page (kachegaroff-line.ru). Both PDFs are scans without a text layer, so no text search inside them.
+Checks: `node qa/test-c-r16-docs.cjs` (both rows present, every PDF link answers 200), plus the r16 regression, catalog and gears tests; axe 0 violations; 10-page x 10-width sweep without overflow.
+Rollback: `git rm -r c-r16` or `git checkout before-c-r16 -- .` (the two PDFs in `assets/` stay; delete them separately if needed).
