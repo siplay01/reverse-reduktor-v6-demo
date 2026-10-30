@@ -525,3 +525,15 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .tile-ph .ph-art { width: 100%; height: 100%; }
 .tile-ph .ph-pill { display: none; }
 @media (max-width: 700px) { .tile-ph { height: 90px; } }
+/* services: vertical numbered list, heading + note on the left */
+.sec-svc .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: 56px; align-items: start; }
+.sec-svc h2 { grid-column: 1; grid-row: 1; }
+.sec-svc .svc3-note { grid-column: 1; grid-row: 2; margin-top: 0; max-width: 34ch; line-height: 1.6; }
+.svc3 { grid-column: 2; grid-row: 1 / span 2; display: block; counter-reset: sv; background: var(--panel); border: 1px solid var(--line); }
+.svc3 li { counter-increment: sv; display: grid; grid-template-columns: 2.6em 40px 1fr; align-items: center; gap: 18px; padding: 20px 26px; border: 0; border-bottom: 1px solid var(--line); background: none; }
+.svc3 li:last-child { border-bottom: 0; }
+.svc3 li::before { content: counter(sv, decimal-leading-zero); font-size: 13px; font-weight: 800; color: var(--accent-text); }
+.svc3 svg { width: 36px; height: 36px; }
+.svc3 h3 { font-size: 18px; }
+@media (max-width: 900px) { .sec-svc .wrap { grid-template-columns: 1fr; } .sec-svc h2, .sec-svc .svc3-note, .svc3 { grid-column: 1; grid-row: auto; } .sec-svc .svc3-note { order: 3; margin-top: 14px; max-width: none; } }
+@media (max-width: 700px) { .svc3 li { grid-template-columns: 2em 30px 1fr; gap: 12px; padding: 16px; flex-direction: initial; } .svc3 svg { width: 28px; height: 28px; } .svc3 h3 { font-size: 16px; } }
