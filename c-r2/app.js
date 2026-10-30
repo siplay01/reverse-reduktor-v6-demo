@@ -103,17 +103,38 @@
       ...groupsOf(m.id).map(([g, n], i) => ({ key: `gr-${i + 1}`, label: g, n, num: i + 1 }))];
   }
 
+  // «Запасные части» per Dmitry 2026-10-29: four catalogs, РР-238 not listed
+  const CATS = [
+    { slug: "rr-300", short: "РР-300", title: "Для реверс-редуктора гидравлического РР-300", note: "26 узлов с чертежами и спецификациями" },
+    { slug: "3d6", short: "3Д6", title: "Для реверс-редуктора механического 3Д6", note: `${D.parts["3d6"].length} позиций по группам` },
+    { slug: "3d12", short: "3Д12", title: "Для реверс-редуктора механического 3Д12", note: `${D.parts["3d12"].length} позиций по группам` },
+    { slug: "mufta-ms", short: "Муфта МС", title: "Для муфты сцепления", note: "гидравлическая СБ525-01-14, механическая СБ1226-00-2" },
+  ];
+  const CAT_MODELS = ["rr300", "3d6", "3d12"];
   function bar(m, key) {
-    const vs = viewsOf(m);
+    const vs = m ? viewsOf(m) : [], cur = m ? m.slug : "mufta-ms";
     return `<div class="cat-bar" role="search">
-      <div class="seg" role="group" aria-label="Редуктор">${D.models.map((x) => `<a href="#katalog/${x.slug}"${x.id === m.id ? ' aria-current="true"' : ""}>${esc(x.name)}</a>`).join("")}</div>
-      <label class="fld"><span>${m.id === "rr300" ? "Узел каталога" : "Группа деталей"}</span>
-        <select data-jump="${m.slug}"><option value="">${key ? "Все узлы" : "Выберите…"}</option>${vs.map((v) => `<option value="${v.key}"${v.key === key ? " selected" : ""}>${v.fig ? "Рис. " + v.fig + ". " : ""}${esc(v.label)} (${v.n})</option>`).join("")}</select></label>
+      <div class="seg" role="group" aria-label="Каталог">${CATS.map((c) => `<a href="#katalog/${c.slug}"${c.slug === cur ? ' aria-current="true"' : ""}>${esc(c.short)}</a>`).join("")}</div>
+      ${m ? `<label class="fld"><span>${m.id === "rr300" ? "Узел каталога" : "Группа деталей"}</span>
+        <select data-jump="${m.slug}"><option value="">${key ? "Все узлы" : "Выберите…"}</option>${vs.map((v) => `<option value="${v.key}"${v.key === key ? " selected" : ""}>${v.fig ? "Рис. " + v.fig + ". " : ""}${esc(v.label)} (${v.n})</option>`).join("")}</select></label>` : `<span></span>`}
       <label class="fld fld-q"><span>Поиск во всех каталогах</span><input type="search" placeholder="Обозначение или название" autocomplete="off" data-gq></label>
     </div>
     <div class="gres" data-gres hidden></div>`;
   }
   const crumbs = (items) => `<nav class="crumbs" aria-label="Путь"><a href="#">Главная</a>${items.map(([t, h]) => `<span aria-hidden="true">/</span>${h ? `<a href="${h}">${esc(t)}</a>` : `<span aria-current="page">${esc(t)}</span>`}`).join("")}</nav>`;
+
+  function catsPage() {
+    return crumbs([["Запасные части"]]) +
+      `<header class="cat-head"><p class="kicker">Каталоги запасных частей</p><h1 tabindex="-1">Запасные части</h1>
+       <p class="muted">Выберите каталог: откроются узлы, чертежи и перечни деталей с обозначениями.</p></header>
+      <ul class="cats">${CATS.map((c) => `<li><a href="#katalog/${c.slug}"><b>${esc(c.title)}</b><span>${esc(c.note)}</span></a></li>`).join("")}</ul>`;
+  }
+  function muftaPage() {
+    return crumbs([["Запасные части", "#katalog"], ["Муфта сцепления"]]) + bar(null, "") +
+      `<header class="cat-head"><p class="kicker">Муфта сцепления МС</p><h1 tabindex="-1">Запасные части для муфты сцепления</h1>
+       <p class="muted">Муфты сцепления: гидравлическая ${sku("СБ525-01-14")} и механическая ${sku("СБ1226-00-2")}. Каталог деталей муфт на сайте пока не опубликован: пришлите обозначение детали, подберём по каталогу.</p></header>
+      <p class="mufta-contacts"><a class="btn" href="mailto:${D.company.email}?subject=${encodeURIComponent("Запчасти для муфты сцепления")}">Написать на ${D.company.email}</a><a class="btn btn-line" href="tel:${D.company.tel}">${D.company.phone}</a></p>`;
+  }
 
   function indexPage(m) {
     const vs = viewsOf(m);
@@ -207,7 +228,7 @@
 
   // global search over every catalog; hits open the node where the part sits
   const INDEX = [];
-  D.models.forEach((m) => D.parts[m.id].forEach(([des, name]) => INDEX.push({ m, des, name, k: norm(des + " " + name) })));
+  D.models.filter((m) => CAT_MODELS.includes(m.id)).forEach((m) => D.parts[m.id].forEach(([des, name]) => INDEX.push({ m, des, name, k: norm(des + " " + name) })));
   const nodeOf = (des) => { const nd = D.nodes.find((n) => n.rows.some((r) => r[1] === des)); return nd ? `ris-${nd.fig}` : "vse"; };
   function gsearch(box, q) {
     const out = $("[data-gres]", box), nq = norm(q);
@@ -231,7 +252,9 @@
     const box = $("[data-cat]"), [, slug, key] = path;
     const m = model(slug) || rr300;
     let html;
-    if (path[0] === "katalog") html = indexPage(m);
+    if (path[0] === "katalog" && !slug) html = catsPage();
+    else if (slug === "mufta-ms") html = muftaPage();
+    else if (path[0] === "katalog") html = indexPage(m);
     else if (key === "obshchiy" && m.id === "rr300") html = overviewPage(m);
     else if (key && key.startsWith("ris-") && m.id === "rr300") html = nodePage(m, D.nodes.find((n) => `ris-${n.fig}` === key) || D.nodes[0], compare, q);
     else html = listPage(m, key, q);
