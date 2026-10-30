@@ -546,3 +546,7 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .arch div span { font-size: 12px; }
 .arch .btn-sm { min-height: 34px; padding: 6px 12px; font-size: 12px; }
 @media (max-width: 800px) { .arch { grid-template-columns: 1fr; } .arch li:nth-child(odd) { border-right: 0; } .arch li:nth-last-child(2) { border-bottom: 1px solid var(--line); } .arch li { grid-template-columns: 1fr; } }
+.ph-wm { opacity: .045; font-size: 104px; }
+.tile-ph .ph-wm { opacity: .06; }
+.sec-svc .wrap { grid-template-rows: auto 1fr; }
+.sec-svc .svc3-note { align-self: start; }

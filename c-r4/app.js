@@ -50,7 +50,7 @@
   function soonArt(label) {
     return `<svg class="ph-art" viewBox="0 0 600 400" role="img" aria-label="${esc(label)}">
       <rect width="600" height="400" class="ph-bg"/>
-      <g class="ph-sil">
+      <g transform="translate(-30 -8)"><g class="ph-sil">
         <rect x="150" y="96" width="210" height="22" rx="4"/>
         <path d="M140 122h250v178H150a10 10 0 0 1-10-10z"/>
         <rect x="160" y="300" width="230" height="16" rx="3"/>
@@ -59,8 +59,8 @@
       </g>
       <circle cx="415" cy="208" r="74" class="ph-in"/>
       <circle cx="415" cy="208" r="24" class="ph-hub"/>
-      <g class="ph-bolts">${Array.from({ length: 16 }, (_, i) => { const a = (i / 16) * Math.PI * 2; return `<circle cx="${(415 + 89 * Math.cos(a)).toFixed(1)}" cy="${(208 + 89 * Math.sin(a)).toFixed(1)}" r="3.5"/>`; }).join("")}</g>
-      <text x="300" y="232" class="ph-wm" transform="rotate(-14 300 210)">СКОРО</text>
+      <g class="ph-bolts">${Array.from({ length: 16 }, (_, i) => { const a = (i / 16) * Math.PI * 2; return `<circle cx="${(415 + 89 * Math.cos(a)).toFixed(1)}" cy="${(208 + 89 * Math.sin(a)).toFixed(1)}" r="3.5"/>`; }).join("")}</g></g>
+      <text x="300" y="228" class="ph-wm" transform="rotate(-12 300 208)">СКОРО</text>
       <g class="ph-pill"><rect x="170" y="340" width="260" height="36" rx="18"/>
         <path d="M198 351h6l2-3h8l2 3h6v14h-24z M210 352a5 5 0 1 0 0.01 0" class="ph-cam"/>
         <text x="312" y="363">${esc(label)}</text></g>
