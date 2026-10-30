@@ -580,3 +580,17 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .node6 { grid-template-columns: .62fr 1.38fr; }
 .node6 .node-spec { min-width: 0; }
 @media (max-width: 1100px) { .node6 { grid-template-columns: 1fr; } }
+
+/* ---- revision 7 ---- */
+/* catalog page: compact model cards, same concept as the home page */
+.models-sm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.mcard-sm { grid-template-columns: 190px 1fr; }
+.mcard-sm .mcard-pic { min-height: 170px; }
+.mcard-sm .mcard-body { padding: 18px 20px; }
+.mcard-sm .mcard-kind { font-size: 11px; }
+.mcard-sm .mcard-h { font-size: 22px; margin: 4px 0 2px; }
+.mcard-sm .mcard-h .sku { font-size: 13px; }
+.mcard-sm .mcard-app { font-size: 12px; }
+.mcard-sm .mcard-btns { margin-top: 12px; }
+@media (max-width: 900px) { .models-sm { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .mcard-sm { grid-template-columns: 130px 1fr; } .mcard-sm .mcard-pic { min-height: 130px; aspect-ratio: auto; } .mcard-sm .mcard-body { padding: 14px; } .mcard-sm .mcard-h { font-size: 19px; } }

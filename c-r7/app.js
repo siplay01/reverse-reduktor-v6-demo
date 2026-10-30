@@ -167,9 +167,21 @@
     { slug: "3d12", short: "3Д12", title: "Для реверс-редуктора механического 3Д12", note: `${D.parts["3d12"].length} позиций по группам` },
     { slug: "mufta-ms", short: "Муфта МС", title: "Для муфты сцепления", note: "гидравлическая СБ525-01-14, механическая СБ1226-00-2" },
   ];
+  // r7: the catalog page shows compact versions of the home-page model cards (same concept, smaller)
   function catsPage() {
+    const card = (c) => {
+      const m = model(c.slug), p = m && PIC[m.id];
+      const pic = p ? `<img src="${p[0]}" width="${p[1]}" height="${p[2]}" alt="${esc(p[3])}" loading="lazy">` : soonArt("Фото скоро появится");
+      const kind = m ? `${cap(m.kind)} реверс-редуктор` : "Муфта сцепления";
+      const title = m ? `${esc(m.name)} ${sku(m.designation)}` : "Муфта сцепления МС";
+      return `<article class="mcard mcard-sm">
+        <a class="mcard-pic${p ? "" : " is-soon"}" href="#katalog/${c.slug}" tabindex="-1" aria-hidden="true">${pic}</a>
+        <div class="mcard-body"><p class="mcard-kind">${kind}</p><h2 class="mcard-h"><a href="#katalog/${c.slug}">${title}</a></h2>
+          <p class="mcard-app">${esc(c.note)}</p><p class="mcard-btns"><a class="btn btn-white btn-sm" href="#katalog/${c.slug}">Каталог запчастей</a></p></div>
+      </article>`;
+    };
     return crumbs([["Запасные части"]]) + head1("Запасные части", `<a class="all-link" href="#katalog/vse">Все запчасти одним списком (${D.catalog.length})</a>`) +
-      `<ul class="cats">${CATS.map((c) => `<li><a href="#katalog/${c.slug}"><b>${esc(c.title)}</b><span>${esc(c.note)}</span></a></li>`).join("")}</ul>`;
+      `<div class="models-sm">${CATS.map(card).join("")}</div>`;
   }
   function indexPage(m) {
     const vs = viewsOf(m);
