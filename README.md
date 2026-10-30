@@ -14,6 +14,7 @@ ordering info at the bottom of the first page.
 - `c-r4/` C revision 4 (2026-10-29): third round (РР-238 restored, neutral «скоро появится» placeholders, services as a vertical list, compact technical documentation). Steps and rollback: `CHANGELOG.md`.
 - `c-r5/` C revision 5 (2026-10-29): one unified parts catalog (`RR.catalog`) with filters by gearbox and group, search and applicability labels. Steps, evidence and rollback: `CHANGELOG.md`.
 - `c-r6/` C revision 6 (2026-10-29): r5 catalog with the r4 catalog page, picture tiles and list picture restored. `CHANGELOG.md`.
+- `c-r7/` C revision 7 (2026-10-29): compact model cards on the catalog page, services band, documentation archive page. `CHANGELOG.md`.
 - `index.html`: chooser between A, B, C and its revisions.
 - `shared/schema.js`: part groups and the generic group diagram, used by all three.
 - `shared/app.js`: one engine for both (hash routes, picker, drawing/list sync, search, request list). `shared/data.js` is generated.
@@ -39,6 +40,7 @@ node qa/test-c-r3.cjs                # revision 3, Chromium + WebKit
 node qa/test-c-r4.cjs                # revision 4, Chromium + WebKit
 node qa/test-c-r5.cjs                # revision 5 (unified catalog), Chromium + WebKit
 node qa/test-c-r6.cjs                # revision 6, Chromium + WebKit
+node qa/test-c-r7.cjs                # revision 7, Chromium + WebKit
 node qa/axe.cjs                      # axe WCAG 2.2 AA, light + dark
 node qa/shots.cjs ab home,m/3d6      # screenshots + overflow check at 1440 and 390 into qa/shots/
 ```

@@ -2,6 +2,20 @@
 
 Every revision lives in its own folder; older folders are never edited. Git history (local repo in this folder) records each step.
 
+## 2026-10-29 · C revision 7 (`c-r7/`), catalog cards, services, documentation
+
+Start: exact copy of `c-r6/`. Baseline tag `before-c-r7`.
+
+| Step | What changed | Files |
+| --- | --- | --- |
+| 1 | «Запасные части» page: compact versions of the home-page model cards (photo or placeholder, kind, name + designation, count, «Каталог запчастей») for РР-300, РР-238, 3Д6, 3Д12 and the clutch; link «Все запчасти одним списком» kept. | `c-r7/app.js`, `c-r7/style.css` |
+| 2, 2b | «Услуги» redesigned after references (ZF Marine aftersales brochure, Transmission Marine «Our Services»; search via Tavily): navy band with a faint РР-300 section drawing, heading «Ремонт, изготовление и техническое сопровождение», РКО line, «Позвонить» / «Написать», five equal cards (icon in a bronze circle, number, name). | `c-r7/index.html`, `c-r7/style.css` |
+| 3, 3b | «Техническая документация» on the home page is one compact line «Техническая документация · Каталоги и руководства →». The tab and footer link open the archive page `#arhiv`: groups «Руководства по эксплуатации», «Каталоги деталей», «Инструкции по ремонту»; each row: document, product, format, actions (manual PDF, РР-300 catalog scans + interactive catalog); 3Д6, 3Д12, clutch catalogs and repair instructions «В подготовке». | `c-r7/index.html`, `c-r7/app.js`, `c-r7/style.css` |
+
+Checks: `node qa/test-c-r7.cjs` passed (Chromium + WebKit); `node qa/axe.cjs` 0 violations; no horizontal overflow at 390 and 1024 (WebKit); revision 6 test still passes.
+
+Rollback: older folders untouched; `git revert <commit>` or `git checkout before-c-r7 -- .`
+
 ## 2026-10-29 · C revision 6 (`c-r6/`), catalog and pictures restored
 
 Dmitry: «картинки и каталог должны были остаться, а ты их удалил». Revision 5 had removed the «Запасные части» catalog page, the per-gearbox pages with picture tiles and the picture beside the parts list. Start: exact copy of `c-r5/`. Baseline tag `before-c-r6`.
