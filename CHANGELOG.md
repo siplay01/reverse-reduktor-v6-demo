@@ -2,6 +2,23 @@
 
 Every revision lives in its own folder; older folders are never edited. Git history (local repo in this folder) records each step.
 
+## 2026-10-29 · C revision 3 (`c-r3/`), Dmitry's second round
+
+Start: exact copy of `c-r2/`. Baseline tag `before-c-r3`. Shared data gained two fields (`prices`, `scans`); older designs ignore them and their tests still pass.
+
+| Step | What changed | Files |
+| --- | --- | --- |
+| data | Unit prices from the old store (2025 price list, 158 of 307 parts) and the 89 scanned pages of the РР-300 catalog. | `build.py`, `shared/data.js`, `assets/` |
+| 1 | Product cards: clutch and the upcoming hydraulic model get one shared drawn illustration (drive line: двигатель, муфта, реверс-редуктор, валопровод) labelled «Фото готовится» / «Новая модель · скоро». Word NEW removed; the upcoming model is titled «Гидравлический реверс-редуктор», kind «Новая разработка», badge «В разработке», bronze frame; button «Узнать о сроках» kept. | `c-r3/app.js`, `c-r3/style.css` |
+| 2 | Services: five equal tiles with a line icon and the name only (no descriptions that repeat the title, no single dark card); one shared note about РКО under the tiles. | `c-r3/index.html`, `c-r3/style.css` |
+| 3 | «Техническая документация» opens «Архив технической документации»: руководство РР-300 (PDF), каталог деталей РР-300 (89 scanned pages in a viewer + the interactive catalog), свидетельство РКО; «Инструкции по ремонту реверс-редукторов» and «Каталоги деталей 3Д6, 3Д12 и муфт сцепления» marked «В подготовке». Certificate block kept, anchor now `#svidetelstvo`. | `c-r3/index.html`, `c-r3/app.js`, `c-r3/style.css` |
+| 4 | Catalog: one-line compact headers (no big title, no kicker, no repeated designation), one tool row (исполнение, фильтр, все исполнения), columns Поз. / Обозначение / Наименование / В изделии / Цена за ед. / Количество + «В запрос» last; mass column removed; quantity goes into the request list; the page scrolls with a pinned table header instead of an inner scroll box. 3Д6, 3Д12 and the clutch use the same layout as РР-300 with the illustration «Чертёж в подготовке» instead of the group diagram. Price note «по прайсу 2025 г.» once under the table. | `c-r3/app.js`, `c-r3/style.css` |
+| 4b, 4c | Illustration label position, regular weight for «по запросу», tighter rows; phone layout of the tool row and row cards. | `c-r3/app.js`, `c-r3/style.css` |
+
+Checks: `node qa/test-c-r3.cjs` passed (Chromium + WebKit); `node qa/axe.cjs` 0 violations on all versions; no horizontal overflow at 390, 1024, 1440 (WebKit + Chromium); A, B, C-r1, C-r2 tests still pass.
+
+Rollback: older folders untouched; one step: `git revert <commit>` (messages start with «c-r3 step N»); everything: `git checkout before-c-r3 -- .`
+
 ## 2026-10-29 · C revision 2 (`c-r2/`), Dmitry's corrections
 
 Start: exact copy of `c-r1/` (markup, style) + `c/app.js` (commit `bc88039`). Baseline of everything before: tag `before-c-r2` (commit `04451f1`).
