@@ -2,7 +2,7 @@
 // usual auto-parts structure: model switch, node select, global search, drawing beside the specification,
 // variant (исполнение) selector with per-variant quantities, request list (mailto on a click only).
 (() => {
-  const D = window.RR, { groupsOf, schematic } = window.RRSchema;
+  const D = window.RR, { GROUPS, groupsOf, schematic } = window.RRSchema;
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const norm = (s) => String(s).toLowerCase().replace(/[\s\-–.]/g, "").replace(/ё/g, "е");
@@ -125,24 +125,29 @@
       ...groupsOf(m.id).map(([g, n], i) => ({ key: `gr-${i + 1}`, label: g, n, num: i + 1 }))];
   }
 
-  // «Запасные части» per Dmitry 2026-10-29: four catalogs, РР-238 not listed
-  const CATS = [
-    { slug: "rr-300", short: "РР-300", title: "Для реверс-редуктора гидравлического РР-300", note: "26 узлов с чертежами и спецификациями" },
-    { slug: "rr-238", short: "РР-238", title: "Для реверс-редуктора гидравлического РР-238", note: `${D.parts.rr238.length} позиции` },
-    { slug: "3d6", short: "3Д6", title: "Для реверс-редуктора механического 3Д6", note: `${D.parts["3d6"].length} позиций по группам` },
-    { slug: "3d12", short: "3Д12", title: "Для реверс-редуктора механического 3Д12", note: `${D.parts["3d12"].length} позиций по группам` },
-    { slug: "mufta-ms", short: "Муфта МС", title: "Для муфты сцепления", note: "гидравлическая СБ525-01-14, механическая СБ1226-00-2" },
-  ];
-  const CAT_MODELS = ["rr300", "rr238", "3d6", "3d12"];
-  function bar(m, key) {
-    const vs = m ? viewsOf(m) : [], cur = m ? m.slug : "mufta-ms";
-    return `<div class="cat-bar" role="search">
-      <div class="seg" role="group" aria-label="Каталог">${CATS.map((c) => `<a href="#katalog/${c.slug}"${c.slug === cur ? ' aria-current="true"' : ""}>${esc(c.short)}</a>`).join("")}</div>
-      ${m ? `<label class="fld"><span>${m.id === "rr300" ? "Узел каталога" : "Группа деталей"}</span>
-        <select data-jump="${m.slug}"><option value="">${key ? "Все узлы" : "Выберите…"}</option>${vs.map((v) => `<option value="${v.key}"${v.key === key ? " selected" : ""}>${v.fig ? "Рис. " + v.fig + ". " : ""}${esc(v.label)} (${v.n})</option>`).join("")}</select></label>` : `<span></span>`}
-      <label class="fld fld-q"><span>Поиск во всех каталогах</span><input type="search" placeholder="Обозначение или название" autocomplete="off" data-gq></label>
-    </div>
-    <div class="gres" data-gres hidden></div>`;
+  // r5: one parts catalog for all gearboxes (D.catalog, one record per designation). Filter state lives in the URL:
+  // #katalog[/<model slug>][?g=<group>&q=<text>]. Gearbox cards open it pre-filtered; old #m/<model>/vse|gr-N redirect here.
+  const FILTER_IDS = ["rr300", "rr238", "3d6", "3d12"];
+  const byId = (id) => D.models.find((m) => m.id === id);
+  const catHash = (st) => {
+    const u = new URLSearchParams(); if (st.g) u.set("g", st.g); if (st.q) u.set("q", st.q);
+    const s = u.toString(); return "#katalog" + (st.m ? "/" + byId(st.m).slug : "") + (s ? "?" + s : "");
+  };
+  const nodeSelect = (key) => `<label class="fld"><span>Чертёж узла РР-300</span><select data-jump="rr-300"><option value="">Выберите…</option>${viewsOf(rr300).filter((v) => v.key !== "vse").map((v) => `<option value="${v.key}"${v.key === key ? " selected" : ""}>${v.fig ? "Рис. " + v.fig + ". " : ""}${esc(v.label)}</option>`).join("")}</select></label>`;
+  // mode "list": filters act in place; "page": drawing pages, the search jumps to the list; "none": the clutch page
+  function bar(st, mode, key) {
+    const pool = D.catalog.filter((p) => !st.m || p.models.includes(st.m));
+    const groups = GROUPS.map((g) => [g, pool.filter((p) => p.type === g).length]).filter(([, n]) => n);
+    const active = mode === "list" && (st.m || st.g || st.q);
+    return `<div class="cat-bar cat-bar5" role="search">
+      <div class="fld"><span>По редуктору</span><div class="seg" role="group" aria-label="По редуктору">` +
+        `<a href="#katalog"${mode === "list" && !st.m ? ' aria-current="true"' : ""}>Все редукторы</a>` +
+        FILTER_IDS.map((id) => `<a href="${catHash({ m: id })}"${st.m === id ? ' aria-current="true"' : ""}>${esc(byId(id).name)}</a>`).join("") + `</div></div>
+      ${mode === "list" ? `<label class="fld"><span>По группе деталей</span><select data-fg><option value="">Все группы (${pool.length})</option>${groups.map(([g, n]) => `<option value="${esc(g)}"${g === st.g ? " selected" : ""}>${esc(g)} (${n})</option>`).join("")}</select></label>`
+        : st.m === "rr300" ? nodeSelect(key) : `<span></span>`}
+      <label class="fld"><span>Поиск</span><input type="search" placeholder="Обозначение или название" value="${esc(mode === "list" ? st.q || "" : "")}" autocomplete="off" data-fq></label>
+      <a class="reset" href="#katalog" data-reset${active ? "" : " hidden"}>Сбросить фильтры</a>
+    </div>`;
   }
   const crumbs = (items) => `<nav class="crumbs" aria-label="Путь"><a href="#">Главная</a>${items.map(([t, h]) => `<span aria-hidden="true">/</span>${h ? `<a href="${h}">${esc(t)}</a>` : `<span aria-current="page">${esc(t)}</span>`}`).join("")}</nav>`;
 
@@ -154,26 +159,13 @@
   const soonFig = (what) => `<figure class="node-fig"><div class="sheet soon">${soonArt("Чертёж скоро появится")}</div><figcaption>${what}: заводской чертёж готовится к публикации. Подбор сейчас: по обозначению в перечне.</figcaption></figure>`;
   const PRICE_NOTE = "Цены за единицу по прайсу 2025 г., уточняйте при заказе.";
 
-  function catsPage() {
-    return crumbs([["Запасные части"]]) + head1("Запасные части") +
-      `<ul class="cats">${CATS.map((c) => `<li><a href="#katalog/${c.slug}"><b>${esc(c.title)}</b><span>${esc(c.note)}</span></a></li>`).join("")}</ul>`;
-  }
   function muftaPage() {
-    return crumbs([["Запасные части", "#katalog"], ["Муфта сцепления"]]) + bar(null, "") + head1("Муфта сцепления МС") +
+    return crumbs([["Запасные части", "#katalog"], ["Муфта сцепления"]]) + bar({}, "none") + head1("Муфта сцепления МС") +
       `<div class="node">${soonFig("Муфты сцепления")}
         <section class="node-spec"><div class="panel-msg"><p>Муфты сцепления: гидравлическая ${sku("СБ525-01-14")} и механическая ${sku("СБ1226-00-2")}.</p>
           <p class="muted">Перечень деталей муфт готовится. Пришлите обозначение детали: подберём по каталогу.</p>
           <p class="mufta-contacts"><a class="btn btn-sm" href="mailto:${D.company.email}?subject=${encodeURIComponent("Запчасти для муфты сцепления")}">Написать на ${D.company.email}</a><a class="btn btn-line btn-sm" href="tel:${D.company.tel}">${D.company.phone}</a></p></div></section>
       </div>`;
-  }
-
-  function indexPage(m) {
-    const vs = viewsOf(m);
-    const tiles = vs.map((v) => `<a class="tile" href="#m/${m.slug}/${v.key}">` +
-      (v.th ? `<img src="${v.th}" width="420" height="306" alt="" loading="lazy">` : `<span class="tile-ph">${soonArt("Чертёж скоро появится")}</span>`) +
-      `<span class="tile-k">${v.fig ? "Рис. " + v.fig : v.num ? "Группа" : "Перечень"}<span>${v.n}&nbsp;поз.</span></span><span class="tile-t">${esc(v.label)}</span></a>`).join("");
-    return crumbs([["Запасные части", "#katalog"], [m.name]]) + bar(m, "") +
-      head1(`Запчасти ${esc(m.name)} ${sku(m.designation)}`) + `<div class="tiles">${tiles}</div>`;
   }
 
   function buyCell(des, name, where, off) {
@@ -200,7 +192,7 @@
     const notes = [...Object.entries(nd.foot).map(([k, t]) => `<li><sup>${esc(k)}</sup> ${esc(t)}</li>`),
       compare ? "" : `<li>«—» в графе «В изделии»: деталь не входит в выбранное исполнение. ${PRICE_NOTE}</li>`].join("");
     const pn = `<nav class="pn" aria-label="Соседние узлы">${prev ? `<a href="#m/rr-300/ris-${prev.fig}">← Рис. ${prev.fig}</a>` : ""}${next ? `<a href="#m/rr-300/ris-${next.fig}">Рис. ${next.fig} →</a>` : ""}</nav>`;
-    return crumbs([["Запасные части", "#katalog"], ["РР-300", "#katalog/rr-300"], [`Рис. ${nd.fig}`]]) + bar(m, `ris-${nd.fig}`) +
+    return crumbs([["Запасные части", "#katalog"], ["РР-300", "#katalog/rr-300"], [`Рис. ${nd.fig}`]]) + bar({ m: "rr300" }, "page", `ris-${nd.fig}`) +
       head1(`<span class="h-fig">Рис. ${nd.fig}</span> ${esc(nd.title)}`, pn) +
       `<div class="node">
         <figure class="node-fig"><a class="sheet zoom" href="${nd.img2}" target="_blank" rel="noopener"><img src="${nd.img}" srcset="${nd.img} 900w, ${nd.img2} 2000w" sizes="(min-width: 1000px) 34vw, 100vw" width="${nd.w}" height="${nd.h}" alt="Рис. ${nd.fig}. ${esc(nd.title)}"></a>
@@ -221,7 +213,7 @@
 
   function overviewPage(m) {
     const s = D.section;
-    return crumbs([["Запасные части", "#katalog"], ["РР-300", "#katalog/rr-300"], ["Общий вид"]]) + bar(m, "obshchiy") +
+    return crumbs([["Запасные части", "#katalog"], ["РР-300", "#katalog/rr-300"], ["Общий вид"]]) + bar({ m: "rr300" }, "page", "obshchiy") +
       head1("Общий вид, продольный разрез", "", `Нажмите строку перечня: номера отметятся на разрезе. Детали с ценами: в <a href="#katalog/rr-300">узлах каталога</a>.`) + `
       <div class="node node-wide">
         <figure class="node-fig"><div class="sheet pts"><img src="${s.src}" srcset="${s.src} 1200w, ${s.src2} 2400w" sizes="(min-width: 1000px) 55vw, 100vw" width="${s.w}" height="${s.h}" alt="Продольный разрез реверс-редуктора РР-300 с номерами позиций">` +
@@ -232,38 +224,41 @@
       </div>`;
   }
 
-  function listPage(m, key, q) {
-    const vs = viewsOf(m), v = vs.find((x) => x.key === key) || vs[0], g = v.key === "vse" ? null : v.label;
-    const list = D.parts[m.id].filter((p) => !g || p[2] === g);
-    const fig = m.id === "rr300"
-      ? `<figure class="node-fig"><div class="sheet"><img src="${D.front}" width="1200" height="1328" alt="Реверс-редуктор РР-300, вид по руководству по эксплуатации" loading="lazy"></div><figcaption>Подбор по позициям: <a href="#katalog/rr-300">узлы каталога</a>.</figcaption></figure>`
-      : soonFig(m.name);
-    const rows = list.map(([des, name, grp]) => `<tr data-des="${esc(des)}" data-g="${esc(grp)}"><td class="c-des">${sku(des)}</td><td class="c-name">${esc(name)}</td>${g ? "" : `<td class="c-g">${esc(grp)}</td>`}<td class="c-p">${price(des)}</td>` + buyCell(des, name, m.name) + `</tr>`).join("");
-    return crumbs([["Запасные части", "#katalog"], [m.name, `#katalog/${m.slug}`], [v.label]]) + bar(m, v.key) +
-      head1(`${esc(m.name)}: ${esc(v.label.toLowerCase())}`, `<span class="h-count">${list.length}&nbsp;поз.</span>`) +
-      `<div class="node">${fig}
-        <section class="node-spec" aria-label="Перечень деталей">
-          <div class="tools"><label class="tool-f"><span class="sr">Фильтр по перечню</span><input type="search" placeholder="Фильтр по перечню" value="${esc(q)}" data-filter autocomplete="off"></label></div>
-          <div class="tbl"><table class="spec"><thead><tr><th scope="col">Обозначение</th><th scope="col">Наименование</th>${g ? "" : `<th scope="col" class="c-g">Группа</th>`}<th scope="col" class="c-p">Цена за ед.</th><th scope="col" class="c-buy">Количество</th></tr></thead><tbody>${rows}</tbody></table>
-          <p class="none" hidden>Ничего не найдено. Пришлите обозначение: <a href="mailto:${D.company.email}">${D.company.email}</a>.</p></div>
-          <ul class="foot-notes"><li>${PRICE_NOTE}</li></ul>
-        </section>
-      </div>`;
+  // r5: the unified list
+  const modelNames = (ids) => ids.map((id) => byId(id).name);
+  function applic(p) {
+    const chips = p.models.map((id) => `<span class="ap">${esc(byId(id).name)}` +
+      (id === "rr300" && p.figs ? ` <span class="ap-figs">${p.figs.slice(0, 3).map((f) => `<a href="#m/rr-300/ris-${f}?hl=${encodeURIComponent(p.des)}">рис.&nbsp;${f}</a>`).join(", ")}${p.figs.length > 3 ? "…" : ""}</span>` : "") + `</span>`).join("");
+    const notes = [p.vardep ? "зависит от исполнения" : "", p.models.length > 1 ? "уточните при заказе" : ""].filter(Boolean);
+    return chips + (notes.length ? `<span class="ap-note">${notes.join(" · ")}</span>` : "");
   }
-
-  // global search over every catalog; hits open the node where the part sits
-  const INDEX = [];
-  D.models.filter((m) => CAT_MODELS.includes(m.id)).forEach((m) => D.parts[m.id].forEach(([des, name]) => INDEX.push({ m, des, name, k: norm(des + " " + name) })));
-  const nodeOf = (des) => { const nd = D.nodes.find((n) => n.rows.some((r) => r[1] === des)); return nd ? `ris-${nd.fig}` : "vse"; };
-  function gsearch(box, q) {
-    const out = $("[data-gres]", box), nq = norm(q);
-    if (nq.length < 2) { out.hidden = true; out.innerHTML = ""; return; }
-    const hits = INDEX.filter((x) => x.k.includes(nq));
-    out.hidden = false;
-    out.innerHTML = hits.length
-      ? `<p class="gres-n">Найдено: ${hits.length}${hits.length > 40 ? ", показаны первые 40" : ""}</p><ul>` + hits.slice(0, 40).map((x) =>
-        `<li><a href="#m/${x.m.slug}/${x.m.id === "rr300" ? nodeOf(x.des) : "vse"}?q=${encodeURIComponent(x.des)}">${sku(x.des)}<span>${esc(x.name)}</span><b>${esc(x.m.name)}</b></a></li>`).join("") + `</ul>`
-      : `<p class="gres-n">По запросу «${esc(q)}» ничего нет. Пришлите обозначение на <a href="mailto:${D.company.email}">${D.company.email}</a> или позвоните ${D.company.phone}.</p>`;
+  const filtered = (st) => {
+    const nq = norm(st.q || "");
+    return D.catalog.filter((p) => (!st.m || p.models.includes(st.m)) && (!st.g || p.type === st.g) && (!nq || norm(p.des + " " + p.name).includes(nq)));
+  };
+  const rowsHtml = (list) => list.map((p) => `<tr data-des="${esc(p.des)}" data-g="${esc(p.type)}"><td class="c-des">${sku(p.des)}</td><td class="c-name">${esc(p.name)}</td>` +
+    `<td class="c-ap">${applic(p)}</td><td class="c-g">${esc(p.type)}</td><td class="c-p">${price(p.des)}</td>` + buyCell(p.des, p.name, modelNames(p.models).join(", ")) + `</tr>`).join("");
+  const nodesStrip = () => `<details class="nodes5"><summary>Чертежи узлов РР-300 (${D.nodes.length + 1})</summary><div class="tiles">` +
+    viewsOf(rr300).filter((v) => v.key !== "vse").map((v) => `<a class="tile" href="#m/rr-300/${v.key}"><img src="${v.th}" width="420" height="306" alt="" loading="lazy"><span class="tile-k">${v.fig ? "Рис. " + v.fig : "Разрез"}<span>${v.n}&nbsp;поз.</span></span><span class="tile-t">${esc(v.label)}</span></a>`).join("") + `</div></details>`;
+  function catalogPage(st) {
+    const list = filtered(st), m = st.m ? byId(st.m) : null;
+    return crumbs(m ? [["Запасные части", "#katalog"], [m.name]] : [["Запасные части"]]) + bar(st, "list") +
+      head1(`Запасные части${m ? ` ${esc(m.name)} ${sku(m.designation)}` : ""}`, `<span class="h-count" data-count>${list.length}&nbsp;поз.</span>`) +
+      (st.m === "rr300" ? nodesStrip() : "") +
+      `<section class="node-spec cat-list" aria-label="Перечень деталей"><div class="tbl"><table class="spec spec5"><thead><tr><th scope="col">Обозначение</th><th scope="col">Наименование</th><th scope="col" class="c-ap">Применяемость</th><th scope="col" class="c-g">Группа</th><th scope="col" class="c-p">Цена за ед.</th><th scope="col" class="c-buy">Количество</th></tr></thead><tbody data-rows>${rowsHtml(list)}</tbody></table>
+        <p class="none" data-none${list.length ? " hidden" : ""}>Ничего не найдено. Проверьте обозначение или пришлите его: <a href="mailto:${D.company.email}">${D.company.email}</a>, ${D.company.phone}.</p></div>
+        <ul class="foot-notes"><li>Применяемость: по каталогу деталей РР-300 (ссылка на рисунок) или по данным прежнего каталога. «Уточните при заказе»: связь с несколькими моделями документально не подтверждена. «Зависит от исполнения»: деталь входит не во все исполнения РР-300.</li><li>${PRICE_NOTE}</li></ul>
+      </section>`;
+  }
+  let cstate = null;
+  function refreshList() {
+    const box = $("[data-cat]"), list = filtered(cstate);
+    $("[data-rows]", box).innerHTML = rowsHtml(list);
+    $("[data-count]", box).innerHTML = `${list.length}&nbsp;поз.`;
+    $("[data-none]", box).hidden = list.length > 0;
+    $("[data-reset]", box).hidden = !(cstate.m || cstate.g || cstate.q);
+    history.replaceState(null, "", catHash(cstate));
+    route.last = location.hash.slice(1).split("?")[0];
   }
 
   function filterRows(box, q) {
@@ -280,33 +275,43 @@
       <ul class="scans">${D.scans.map((x) => `<li><a href="${x.f}" target="_blank" rel="noopener"><img src="${x.t}" width="420" height="305" alt="Страница ${x.n}: ${esc(x.title)}" loading="lazy"><span><b>${x.n}</b> ${esc(x.title)}</span></a></li>`).join("")}</ul>`;
   }
 
-  function renderCat(path, q) {
-    const box = $("[data-cat]"), [, slug, key] = path;
-    const m = model(slug) || rr300;
+  function renderCat(path, qs) {
+    const box = $("[data-cat]"), [, slug, key] = path, q = qs.get("q") || "", hl = qs.get("hl") || "";
     let html;
     if (path[0] === "arhiv") html = scansPage();
-    else if (path[0] === "katalog" && !slug) html = catsPage();
-    else if (slug === "mufta-ms") html = muftaPage();
-    else if (path[0] === "katalog") html = indexPage(m);
-    else if (key === "obshchiy" && m.id === "rr300") html = overviewPage(m);
-    else if (key && key.startsWith("ris-") && m.id === "rr300") html = nodePage(m, D.nodes.find((n) => `ris-${n.fig}` === key) || D.nodes[0], compare, q);
-    else html = listPage(m, key, q);
+    else if (path[0] === "katalog" && slug === "mufta-ms") html = muftaPage();
+    else if (path[0] === "katalog") { const m = model(slug); cstate = { m: m && FILTER_IDS.includes(m.id) ? m.id : null, g: qs.get("g") || "", q }; html = catalogPage(cstate); }
+    else if (key === "obshchiy") html = overviewPage(rr300);
+    else html = nodePage(rr300, D.nodes.find((n) => `ris-${n.fig}` === key) || D.nodes[0], compare, q);
     box.innerHTML = html;
-    if (q) { filterRows(box, q); const hit = $(`tr[data-des="${CSS.escape(q)}"]`, box); if (hit) { hit.classList.add("hit"); } }
+    if (path[0] === "m" && q) filterRows(box, q);
+    const mark = hl || (path[0] === "m" ? q : "");
+    if (mark) { const hit = $(`tr[data-des="${CSS.escape(mark)}"]`, box); if (hit) { hit.classList.add("hit"); requestAnimationFrame(() => hit.scrollIntoView({ block: "center" })); } }
     document.title = `${$("h1", box).textContent} · каталог запчастей · Реверс-редуктор`;
+  }
+
+  // old catalog addresses (r1-r4) -> the unified list; drawing pages of РР-300 stay
+  function legacyHash(path, qs) {
+    if (path[0] !== "m") return null;
+    const m = model(path[1]), key = path[2] || "";
+    if (m && m.id === "rr300" && (key.startsWith("ris-") || key === "obshchiy")) return null;
+    if (!m) return "#katalog";
+    const v = key.startsWith("gr-") ? viewsOf(m).find((x) => x.key === key) : null;
+    return catHash({ m: FILTER_IDS.includes(m.id) ? m.id : null, g: v ? v.label : "", q: qs.get("q") || "" });
   }
 
   // ---------- routing ----------
   function route() {
     const h = decodeURIComponent(location.hash.slice(1)), [p, qs] = h.split("?");
-    const q = new URLSearchParams(qs || "").get("q") || "", path = p.split("/");
+    const params = new URLSearchParams(qs || ""), path = p.split("/");
+    const legacy = legacyHash(path, params); if (legacy) { location.replace(legacy); return; }
     const isCat = path[0] === "katalog" || path[0] === "m" || path[0] === "arhiv";
     $("[data-view=home]").hidden = isCat; $("[data-view=cat]").hidden = !isCat;
     $$("[data-nav]").forEach((a) => a.toggleAttribute("aria-current", a.dataset.nav === (path[0] === "arhiv" ? "dokumenty" : isCat ? "katalog" : path[0])));
     $(".burger").open = false;
     if (isCat) {
       const sameKey = route.last === p;
-      renderCat(path, q);
+      renderCat(path, params);
       if (!sameKey) { window.scrollTo(0, 0); const h1 = $("[data-cat] h1"); h1 && h1.focus?.({ preventScroll: true }); }
       route.last = p;
     } else {
@@ -348,30 +353,23 @@
       $$(".pt", box).forEach((p) => p.classList.toggle("on", nums.includes(+p.dataset.n)));
       $$("tr[data-nums]", box).forEach((r) => r.classList.toggle("on", r.dataset.nums.split(" ").map(Number).some((n) => nums.includes(n))));
     }
-    const z = t.closest(".pk-zone");
-    if (z && $("[data-view=cat]").hidden === false) {
-      const m = model(location.hash.split("/")[1]) || D.models[0], v = viewsOf(m).find((x) => x.label === z.dataset.g);
-      if (v) location.hash = `m/${m.slug}/${v.key}`;
-    }
   });
   document.addEventListener("keydown", (e) => {
     const tr = e.target.closest?.("tr[data-nums]"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); tr.click(); }
-    if (e.key === "Escape" && e.target.matches?.("[data-gq]")) { e.target.value = ""; gsearch($("[data-cat]"), ""); }
+    // on drawing pages the search box sends the query to the unified list
+    if (e.key === "Enter" && e.target.matches?.("[data-fq]") && !$("[data-rows]")) location.hash = catHash({ q: e.target.value.trim() });
   });
   document.addEventListener("input", (e) => {
     const t = e.target;
-    if (t.matches("[data-gq]")) gsearch($("[data-cat]"), t.value);
+    if (t.matches("[data-fq]") && $("[data-rows]")) { cstate.q = t.value; refreshList(); }
     if (t.matches("[data-filter]")) filterRows($("[data-cat]"), t.value);
   });
   document.addEventListener("change", (e) => {
     const t = e.target;
     if (t.matches("[data-jump]")) location.hash = t.value ? `m/${t.dataset.jump}/${t.value}` : `katalog/${t.dataset.jump}`;
+    if (t.matches("[data-fg]")) { cstate.g = t.value; refreshList(); }
     if (t.matches("[data-isp]")) { isp = t.value; route.last = null; const y = scrollY; route(); scrollTo(0, y); $("[data-isp]").focus(); }
     if (t.matches("[data-q]")) { cart[+t.dataset.q].q = Math.max(1, parseInt(t.value, 10) || 1); save(); }
-  });
-  document.addEventListener("mouseover", (e) => {
-    const tr = e.target.closest?.("tr[data-g]");
-    $$(".pk-zone").forEach((z) => z.classList.toggle("hov", !!tr && z.dataset.g === tr.dataset.g));
   });
 
   renderCart();
