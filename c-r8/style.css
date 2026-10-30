@@ -648,7 +648,7 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .sv8-intro h2 { color: #0d2b45; font-size: clamp(22px, 2.15vw, 32px); line-height: 1.12; letter-spacing: -.035em; font-weight: 800; }
 .sv8-rule { width: 56px; height: 2px; background: #bc8340; margin: 28px 0 !important; }
 .sv8-lead { color: #4f6378; font-size: 14.5px; line-height: 1.65; max-width: 38ch; }
-.sv8-bp { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 34%; object-fit: cover; object-position: left center; mix-blend-mode: multiply; opacity: .24; pointer-events: none; }
+.sv8-bp { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%); mask-image: linear-gradient(to bottom, transparent 0, #000 22%); }
 .sv8-list { background: #fff; padding: 48px 52px 40px; display: flex; flex-direction: column; justify-content: center; }
 .sv8-list ul { list-style: none; margin: 0; padding: 0; }
 .sv8-list li { border-bottom: 1px solid #d5dee5; }
@@ -665,8 +665,8 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 @media (prefers-reduced-motion: no-preference) { .sv8-t, .sv8-dt, .sv8-go svg { transition: color .15s, transform .2s; } .sv8-list li a:hover .sv8-go svg { transform: translateX(3px); } }
 @media (max-width: 900px) {
   .sv8-wrap { grid-template-columns: 1fr; }
-  .sv8-intro { min-height: 0; padding: 40px 24px 200px; }
-  .sv8-bp { height: 180px; }
+  .sv8-intro { min-height: 0; padding: 40px 24px 0; min-height: 0; }
+  .sv8-bp { position: relative; width: calc(100% + 48px); max-width: none; margin: 28px -24px 0; }
   .sv8-list { padding: 12px 20px 28px; }
   .sv8-list li a { grid-template-columns: 44px 1fr 24px; min-height: 64px; }
   .sv8-ds { border-left: 0; padding-left: 0; width: 100%; }
