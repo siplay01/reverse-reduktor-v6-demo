@@ -15,6 +15,7 @@ ordering info at the bottom of the first page.
 - `c-r5/` C revision 5 (2026-10-29): one unified parts catalog (`RR.catalog`) with filters by gearbox and group, search and applicability labels. Steps, evidence and rollback: `CHANGELOG.md`.
 - `c-r6/` C revision 6 (2026-10-29): r5 catalog with the r4 catalog page, picture tiles and list picture restored. `CHANGELOG.md`.
 - `c-r7/` C revision 7 (2026-10-29): compact model cards on the catalog page, services band, documentation archive page. `CHANGELOG.md`.
+- `c-r10/` C revision 10 (2026-10-29): final polish. Services type enlarged (rows 23 px, docs line 19 px), services colours moved to site tokens, radii 6/12 px, drawn section schematics for the clutch and the hydraulic reverse gear, РР-300 section drawing as the main picture of the hydraulic reverse card (test switch, see CHANGELOG). Tests: `node qa/test-c-r10.cjs`, `node qa/test-c-r10-catalog.cjs`.
 - `index.html`: chooser between A, B, C and its revisions.
 - `shared/schema.js`: part groups and the generic group diagram, used by all three.
 - `shared/app.js`: one engine for both (hash routes, picker, drawing/list sync, search, request list). `shared/data.js` is generated.

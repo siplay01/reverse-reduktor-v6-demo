@@ -118,3 +118,13 @@ r8 fix: blueprint in the intro panel is now the drawing from the approved refere
 Start: copy of `c-r8/` (tag `before-c-r9`). The grey silhouette with a «СКОРО» watermark and pill is replaced by two light line schematics reusing the c-r3 drive-line drawing: `line` (engine, clutch, reverse gear, shafting) on the product cards, `gear` (reverse gearbox in section) everywhere spare parts have no photo or drawing (group tiles, node page, compact cards). Pale strokes, faint caption (hidden on small tiles, still read by screen readers). Generic schematics, not drawings of a real unit. Only `c-r9/app.js` (`soonArt`) and `c-r9/style.css` changed.
 Checks: `node qa/shot9.cjs` (screenshots, no overflow at 1440/390, no page errors), axe.
 Rollback: `git rm -r c-r9` or `git checkout before-c-r9 -- .`
+
+## 2026-10-29 · C revision 10 (`c-r10/`), final polish
+
+Start: copy of `c-r9/` (tag `before-c-r10`).
+- Services section: rows 23 px (was 19), numbers 22 px, documentation line 19/16 px, lead 16 px, taller rows; colours moved from the one-off blues/golds to site tokens (`--ink`, `--sub`, `--line`, `--accent-text`); numbers and arrows #a67c3c to pass 3:1 on white.
+- Rounder: `--r` 3 px to 6 px (buttons, inputs, badges, the nine hard-coded 2px rules now use the token), new `--r-lg` 12 px for cards, panels, tiles, dialogs, the services block.
+- Schematic section drawings (generic, drawn, not factory drawings): clutch (МС card) and hydraulic reverse gear (fallback). Group tiles and the node page keep the gear schematic, now on a faint blueprint grid with a dimension line.
+- TEST: the РР-300 manual section drawing is the main picture of the «Гидравлический реверс-редуктор» (new development) card. Switch off: `USE_RR300_DRAWING = false` at the top of the product section of `c-r10/app.js`, or open the page with `?rr300pic=0` (`?rr300pic=1` = on). Off shows the drawn hydraulic schematic.
+Checks: `node qa/test-c-r10.cjs` (Chromium + WebKit, 1920/1440/768/390/375), `node qa/test-c-r10-catalog.cjs` (r7 regression: catalog, search, archive), axe light + dark 0 violations on 6 pages.
+Rollback: `git rm -r c-r10` or `git checkout before-c-r10 -- .`
