@@ -477,7 +477,7 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .tool-f { flex: 1 1 200px; }
 .tool-f input { height: 38px; width: 100%; padding: 0 10px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); color: var(--ink); font-size: 15px; }
 .tools .btn-ghost { min-height: 38px; }
-.tbl, .node-wide .node-spec .tbl, .node:not(:has(.isp)) .tbl { max-height: none; overflow-x: auto; overflow-y: visible; }
+.tbl, .node-wide .node-spec .tbl, .node:not(:has(.isp)) .tbl { max-height: none; overflow: visible; }
 .spec th { top: 85px; z-index: 2; }
 .c-p { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 650; }
 .spec th.c-p, .spec th.c-buy { text-align: right; }
@@ -738,3 +738,5 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .node > *, .node6 > *, .node-wide > * { min-width: 0; }
 @media (max-width: 700px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tile-t { overflow-wrap: anywhere; hyphens: auto; } }
 .tbl { position: relative; }
+/* narrow desktop, tablet, phone: the wide parts table scrolls inside its box (sticky head only above 1300 px) */
+@media (max-width: 1300px) { .tbl, .node-wide .node-spec .tbl, .node:not(:has(.isp)) .tbl { overflow-x: auto; overflow-y: visible; } }
