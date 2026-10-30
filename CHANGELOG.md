@@ -143,3 +143,13 @@ Rollback: `git rm -r c-r11` or `git checkout before-c-r11 -- .`
 Start: copy of `c-r11/` (tag `before-c-r12`). Dmitry: the previous placeholder drawing read as «чемодан с ручкой». The one placeholder picture is now loose machine parts as line art on the blueprint grid: two meshing gears (one with lightening holes), a ball bearing, a toothed friction disc, a splined shaft with a nut, three bolts, and the large «КАРТИНКА СКОРО БУДЕТ» between them. Same picture everywhere (cards, tiles, node pages). Generic shapes. Changed: `soonArt` and the gear path helper in `c-r12/app.js`, a few rules at the end of `c-r12/style.css`.
 Checks: `node qa/test-c-r12.cjs`, `node qa/test-c-r12-catalog.cjs`, axe, overflow sweep.
 Rollback: `git rm -r c-r12` or `git checkout before-c-r12 -- .`
+
+## 2026-10-29 · C revision 13 (`c-r13/`), real drawings for 3Д6 and 3Д12
+
+Start: copy of `c-r12/` (tag `before-c-r13`). Dmitry: the two books are public operating documents supplied with the equipment, so they can be used.
+- 3Д6 page: longitudinal section of the reverse gear (book fig. 11, 27 legend positions) and the friction clutch mechanism (fig. 14, 18 positions) in place of «Картинка скоро будет». 3Д12 page: longitudinal section (Д12 РЭ fig. 70, 29 positions). Crops of the native 1-bit scans, webp 1130-1300 px, in `c-r13/img/`. Legends transcribed by hand from the page images; positions open in a «Позиции на чертеже» list. The group tiles keep the one coming-soon picture; the «Все детали» tile shows the section.
+- «Характеристики»: added type (non-coaxial, two-disc friction clutch, single-stage spur reducer), max propeller thrust (3Д6 2500 кгс, 3Д12 35 кН / 3500 кгс), flange connection; 3Д12 forward ratio now lists 1:1,33 (ordered), both ratios marked «оговаривается при заказе». The reverse ratios (2,96 and 2,18) were already in the specs.
+- Parts table fits its box at 1301 px and wider (cell padding 6 px); was 28 px too wide since r11.
+- Not applied: the clutch figure is not put on the «Муфта сцепления МС» card (whether it is the same clutch as СБ1226-00-2 is unconfirmed). No source notes on the pages (client rule); sources: 3Д6 book (Vershinina, Trumul, 1972) pp. 29 and 33, Д12 РЭ p. 104.
+Checks: `node qa/test-c-r13.cjs`, `-catalog.cjs`, `-gears.cjs` (Chromium + WebKit), axe 0 violations on 3 pages, 10-page x 10-width sweep without overflow or errors.
+Rollback: `git rm -r c-r13` or `git checkout before-c-r13 -- .`
