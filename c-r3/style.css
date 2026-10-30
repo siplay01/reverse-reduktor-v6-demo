@@ -446,3 +446,19 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .svc3-note { margin-top: 18px; color: var(--sub); font-size: 13px; }
 @media (max-width: 1100px) { .svc3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .svc3 { grid-template-columns: 1fr; } .svc3 li { flex-direction: row; align-items: center; padding: 18px; } .svc3 svg { flex: none; width: 36px; height: 36px; } }
+/* documentation archive */
+.sec-docs { background: var(--page); padding-bottom: 24px; }
+.arch { list-style: none; margin: 0; padding: 0; background: var(--panel); border: 1px solid var(--line); }
+.arch li { display: grid; grid-template-columns: 9.5em 1fr auto; gap: 20px; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.arch li:last-child { border-bottom: 0; }
+.arch-k { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 750; color: var(--accent-text); }
+.arch b { display: block; font-size: 16px; letter-spacing: -.01em; }
+.arch div span { color: var(--sub); font-size: 13px; }
+.arch-a { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.arch-soon b { color: var(--sub); }
+.scans { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.scans a { display: flex; flex-direction: column; gap: 6px; background: var(--panel); border: 1px solid var(--line); padding: 8px; text-decoration: none; font-size: 12px; line-height: 1.35; height: 100%; }
+.scans a:hover { border-color: var(--accent); }
+.scans img { width: 100%; height: auto; background: #fff; }
+.scans b { color: var(--accent-text); }
+@media (max-width: 700px) { .arch li { grid-template-columns: 1fr; gap: 6px; } .arch-a { justify-content: flex-start; margin-top: 6px; } .scans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

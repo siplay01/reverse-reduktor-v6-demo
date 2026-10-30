@@ -10,7 +10,7 @@
   const model = (slug) => D.models.find((m) => m.slug === slug);
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const rr300 = D.models.find((m) => m.id === "rr300");
-  const SECTIONS = ["produkciya", "uslugi", "dokumenty", "zakaz", "tendery", "kontakty"];
+  const SECTIONS = ["produkciya", "uslugi", "dokumenty", "svidetelstvo", "kontakty"];
 
   // ---------- request list ----------
   const KEY = "rr-demo-cart-c";
@@ -269,11 +269,19 @@
   }
 
   let compare = false;
+  // archive: scanned pages of the РР-300 parts catalog
+  function scansPage() {
+    return crumbs([["Техническая документация", "#dokumenty"], ["Каталог деталей РР-300"]]) +
+      `<header class="cat-head compact"><h1 tabindex="-1">Каталог деталей РР-300: сканы страниц</h1><p class="muted">${D.scans.length} страниц. Нажмите страницу, чтобы открыть её в полном размере.</p></header>
+      <ul class="scans">${D.scans.map((x) => `<li><a href="${x.f}" target="_blank" rel="noopener"><img src="${x.t}" width="420" height="305" alt="Страница ${x.n}: ${esc(x.title)}" loading="lazy"><span><b>${x.n}</b> ${esc(x.title)}</span></a></li>`).join("")}</ul>`;
+  }
+
   function renderCat(path, q) {
     const box = $("[data-cat]"), [, slug, key] = path;
     const m = model(slug) || rr300;
     let html;
-    if (path[0] === "katalog" && !slug) html = catsPage();
+    if (path[0] === "arhiv") html = scansPage();
+    else if (path[0] === "katalog" && !slug) html = catsPage();
     else if (slug === "mufta-ms") html = muftaPage();
     else if (path[0] === "katalog") html = indexPage(m);
     else if (key === "obshchiy" && m.id === "rr300") html = overviewPage(m);
@@ -288,9 +296,9 @@
   function route() {
     const h = decodeURIComponent(location.hash.slice(1)), [p, qs] = h.split("?");
     const q = new URLSearchParams(qs || "").get("q") || "", path = p.split("/");
-    const isCat = path[0] === "katalog" || path[0] === "m";
+    const isCat = path[0] === "katalog" || path[0] === "m" || path[0] === "arhiv";
     $("[data-view=home]").hidden = isCat; $("[data-view=cat]").hidden = !isCat;
-    $$("[data-nav]").forEach((a) => a.toggleAttribute("aria-current", a.dataset.nav === (isCat ? "katalog" : path[0])));
+    $$("[data-nav]").forEach((a) => a.toggleAttribute("aria-current", a.dataset.nav === (path[0] === "arhiv" ? "dokumenty" : isCat ? "katalog" : path[0])));
     $(".burger").open = false;
     if (isCat) {
       const sameKey = route.last === p;
