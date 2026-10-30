@@ -45,24 +45,25 @@
       m.variants.map(([c, rot, hp, f, r, fi]) => `<tr><td>${sku(m.designation + (c === "-" ? "" : c))}</td><td>${rot}</td><td>${hp}</td><td>${f}</td><td>${r}</td><td>${fi}-пальцевая</td></tr>`).join("") + `</tbody></table>` : "";
     return `<table class="stab"><tbody>${rows}</tbody></table>${vars}`;
   }
-  // One shared «coming soon» illustration: a marine drive line (engine, clutch, reverse gear, shafting) drawn as a
-  // blueprint, with a label. Used where no photo or factory drawing exists yet. Not a drawing of any real unit.
+  // Placeholder where a photo or factory drawing will appear later (common shop pattern: neutral panel, soft product
+  // silhouette, faint «СКОРО» watermark, short label). The silhouette is a generic reverse gearbox, not a real unit.
   function soonArt(label) {
-    return `<svg class="soon-art" viewBox="0 0 600 340" role="img" aria-label="${esc(label)}">
-      <defs><pattern id="sg" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#e4e0d6" stroke-width="1"/></pattern></defs>
-      <rect width="600" height="340" fill="url(#sg)"/>
-      <g class="sa-line">
-        <path class="sa-axis" d="M20 182H585"/>
-        <rect x="40" y="112" width="160" height="124" rx="4"/><path d="M58 112V92h28v20M98 112V92h28v20M138 112V92h28v20M178 112V96h12v16"/>
-        <path d="M54 150h132M54 170h132M54 190h132" class="sa-thin"/>
-        <rect x="200" y="128" width="34" height="108" rx="3"/><path d="M206 140v84M228 140v84" class="sa-thin"/>
-        <rect x="234" y="118" width="128" height="122" rx="6"/>
-        <circle cx="278" cy="166" r="26" class="sa-dash"/><circle cx="320" cy="200" r="30" class="sa-dash"/><circle cx="278" cy="166" r="6"/><circle cx="320" cy="200" r="6"/>
-        <path d="M362 182h178"/><rect x="430" y="172" width="22" height="20"/>
-        <path d="M548 182c10-34 26-44 30-38s-14 30-30 38c22-4 34 6 28 12s-24-4-28-12c-4 22-18 36-24 30s4-24 24-30z"/>
+    return `<svg class="ph-art" viewBox="0 0 600 400" role="img" aria-label="${esc(label)}">
+      <rect width="600" height="400" class="ph-bg"/>
+      <g class="ph-sil">
+        <rect x="150" y="96" width="210" height="22" rx="4"/>
+        <path d="M140 122h250v178H150a10 10 0 0 1-10-10z"/>
+        <rect x="160" y="300" width="230" height="16" rx="3"/>
+        <circle cx="415" cy="208" r="104"/>
+        <circle cx="232" cy="88" r="12" class="ph-ring"/>
       </g>
-      <g class="sa-tags"><text x="120" y="262">Двигатель</text><text x="217" y="262">Муфта</text><text x="298" y="262">Реверс-редуктор</text><text x="452" y="160">Валопровод</text></g>
-      <g class="sa-badge"><rect x="180" y="20" width="240" height="40" rx="3"/><text x="300" y="46">${esc(label)}</text></g>
+      <circle cx="415" cy="208" r="74" class="ph-in"/>
+      <circle cx="415" cy="208" r="24" class="ph-hub"/>
+      <g class="ph-bolts">${Array.from({ length: 16 }, (_, i) => { const a = (i / 16) * Math.PI * 2; return `<circle cx="${(415 + 89 * Math.cos(a)).toFixed(1)}" cy="${(208 + 89 * Math.sin(a)).toFixed(1)}" r="3.5"/>`; }).join("")}</g>
+      <text x="300" y="232" class="ph-wm" transform="rotate(-14 300 210)">СКОРО</text>
+      <g class="ph-pill"><rect x="170" y="340" width="260" height="36" rx="18"/>
+        <path d="M198 351h6l2-3h8l2 3h6v14h-24z M210 352a5 5 0 1 0 0.01 0" class="ph-cam"/>
+        <text x="312" y="363">${esc(label)}</text></g>
     </svg>`;
   }
 
@@ -70,7 +71,7 @@
   const PRODUCT_IDS = ["rr300", "rr238", "3d6", "3d12"]; // r4: РР-238 back (Dmitry: it was missing)
   const extraCards = () => `
       <article class="mcard" id="model-mufta-ms">
-        <a class="mcard-pic is-soon" href="#katalog/mufta-ms" tabindex="-1" aria-hidden="true">${soonArt("Фото готовится")}</a>
+        <a class="mcard-pic is-soon" href="#katalog/mufta-ms" tabindex="-1" aria-hidden="true">${soonArt("Фото скоро появится")}</a>
         <div class="mcard-body">
           <p class="mcard-kind">Муфта сцепления</p>
           <h3 class="mcard-h"><a href="#katalog/mufta-ms">Муфта сцепления МС</a></h3>
@@ -79,7 +80,7 @@
         </div>
       </article>
       <article class="mcard mcard-new" id="model-new">
-        <div class="mcard-pic is-soon" aria-hidden="true">${soonArt("Новая модель · скоро")}</div>
+        <div class="mcard-pic is-soon" aria-hidden="true">${soonArt("Фото скоро появится")}</div>
         <div class="mcard-body">
           <p class="mcard-kind">Новая разработка</p>
           <h3 class="mcard-h">Гидравлический реверс-редуктор <span class="badge">В разработке</span></h3>
@@ -150,7 +151,7 @@
   const nf = new Intl.NumberFormat("ru-RU");
   const price = (des) => (D.prices[des] ? `${nf.format(D.prices[des])}&nbsp;₽` : `<span class="muted">по запросу</span>`);
   const head1 = (title, aside = "", sub = "") => `<header class="cat-head compact"><div><h1 tabindex="-1">${title}</h1>${sub ? `<p class="muted">${sub}</p>` : ""}</div>${aside}</header>`;
-  const soonFig = (what) => `<figure class="node-fig"><div class="sheet soon">${soonArt("Чертёж в подготовке")}</div><figcaption>${what}: заводской чертёж готовится к публикации. Подбор сейчас: по обозначению в перечне.</figcaption></figure>`;
+  const soonFig = (what) => `<figure class="node-fig"><div class="sheet soon">${soonArt("Чертёж скоро появится")}</div><figcaption>${what}: заводской чертёж готовится к публикации. Подбор сейчас: по обозначению в перечне.</figcaption></figure>`;
   const PRICE_NOTE = "Цены за единицу по прайсу 2025 г., уточняйте при заказе.";
 
   function catsPage() {
@@ -169,7 +170,7 @@
   function indexPage(m) {
     const vs = viewsOf(m);
     const tiles = vs.map((v) => `<a class="tile" href="#m/${m.slug}/${v.key}">` +
-      (v.th ? `<img src="${v.th}" width="420" height="306" alt="" loading="lazy">` : `<span class="tile-num">${v.num || "∑"}</span>`) +
+      (v.th ? `<img src="${v.th}" width="420" height="306" alt="" loading="lazy">` : `<span class="tile-ph">${soonArt("Чертёж скоро появится")}</span>`) +
       `<span class="tile-k">${v.fig ? "Рис. " + v.fig : v.num ? "Группа" : "Перечень"}<span>${v.n}&nbsp;поз.</span></span><span class="tile-t">${esc(v.label)}</span></a>`).join("");
     return crumbs([["Запасные части", "#katalog"], [m.name]]) + bar(m, "") +
       head1(`Запчасти ${esc(m.name)} ${sku(m.designation)}`) + `<div class="tiles">${tiles}</div>`;

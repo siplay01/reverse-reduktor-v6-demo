@@ -504,3 +504,24 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .spec td { padding-top: 9px; padding-bottom: 9px; }
 @media (max-width: 700px) { .tools > * { flex: none; } .buy { min-width: 96px; } }
 @media (max-width: 700px) { .spec:not(.cmp) .c-q::before { content: "в изделии: "; } }
+
+/* ---- revision 4 additions ---- */
+/* placeholder image: neutral panel, soft gearbox silhouette, faint watermark, label */
+.ph-art { width: 100%; height: auto; display: block; }
+.ph-bg { fill: #eef1f0; }
+.ph-sil { fill: #d8dedd; }
+.ph-sil .ph-ring { fill: none; stroke: #d8dedd; stroke-width: 6; }
+.ph-in { fill: #e4e9e8; }
+.ph-hub { fill: #cfd6d5; }
+.ph-bolts { fill: #c8d0cf; }
+.ph-wm { fill: #132c3c; opacity: .07; font: 800 120px var(--sans); letter-spacing: .08em; text-anchor: middle; }
+.ph-pill rect { fill: #fff; stroke: #d4dcdb; }
+.ph-pill text { fill: #5c6b71; font: 600 14px var(--sans); text-anchor: middle; }
+.ph-cam { fill: none; stroke: #8a979c; stroke-width: 1.6; }
+.mcard-pic.is-soon { padding: 0; background: #eef1f0; }
+.mcard-pic.is-soon .ph-art { height: 100%; object-fit: cover; }
+.sheet.soon { background: #eef1f0; }
+.tile-ph { display: block; height: 118px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 10px; background: #eef1f0; }
+.tile-ph .ph-art { width: 100%; height: 100%; }
+.tile-ph .ph-pill { display: none; }
+@media (max-width: 700px) { .tile-ph { height: 90px; } }
