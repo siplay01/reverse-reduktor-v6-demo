@@ -386,3 +386,10 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
   .legend tr { grid-template-columns: auto 1fr; }
   .legend td { grid-row: 1 !important; }
 }
+
+/* ---- revision 2 additions ---- */
+/* type tiles for products without a photo (муфта МС, NEW) */
+.mcard-pic.is-type { display: grid; place-items: center; background: var(--hero); min-height: 220px; }
+.mcard-pic.is-type span { font-size: 64px; font-weight: 750; letter-spacing: -.04em; color: #fff; }
+.mcard-new .mcard-pic.is-type span { color: var(--tone); }
+.badge { display: inline-block; vertical-align: middle; margin-left: 10px; padding: 4px 10px; border: 1px solid var(--accent); color: var(--accent-text); font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }

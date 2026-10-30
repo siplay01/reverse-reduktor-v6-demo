@@ -45,8 +45,29 @@
       m.variants.map(([c, rot, hp, f, r, fi]) => `<tr><td>${sku(m.designation + (c === "-" ? "" : c))}</td><td>${rot}</td><td>${hp}</td><td>${f}</td><td>${r}</td><td>${fi}-пальцевая</td></tr>`).join("") + `</tbody></table>` : "";
     return `<table class="stab"><tbody>${rows}</tbody></table>${vars}`;
   }
+  // «Наша продукция» per Dmitry 2026-10-29: РР-300, 3Д6, 3Д12, муфта сцепления МС, гидравлический NEW (в разработке)
+  const PRODUCT_IDS = ["rr300", "3d6", "3d12"];
+  const extraCards = () => `
+      <article class="mcard" id="model-mufta-ms">
+        <a class="mcard-pic is-type" href="#katalog/mufta-ms" tabindex="-1" aria-hidden="true"><span>МС</span></a>
+        <div class="mcard-body">
+          <p class="mcard-kind">Муфта сцепления</p>
+          <h3 class="mcard-h"><a href="#katalog/mufta-ms">Муфта сцепления МС</a></h3>
+          <p class="mcard-app">Гидравлическая ${sku("СБ525-01-14")}, механическая ${sku("СБ1226-00-2")}.</p>
+          <p class="mcard-btns"><a class="btn btn-white btn-sm" href="#katalog/mufta-ms">Запчасти муфты сцепления</a></p>
+        </div>
+      </article>
+      <article class="mcard mcard-new" id="model-new">
+        <div class="mcard-pic is-type" aria-hidden="true"><span>NEW</span></div>
+        <div class="mcard-body">
+          <p class="mcard-kind">Гидравлический реверс-редуктор</p>
+          <h3 class="mcard-h">Реверс-редуктор гидравлический NEW <span class="badge">Скоро · в разработке</span></h3>
+          <p class="mcard-app">Новая модель находится в разработке. Характеристики появятся на сайте позже.</p>
+          <p class="mcard-btns"><a class="btn btn-line btn-sm" href="#kontakty">Узнать о сроках</a></p>
+        </div>
+      </article>`;
   function models() {
-    return D.models.map((m) => {
+    return PRODUCT_IDS.map((id) => D.models.find((m) => m.id === id)).map((m) => {
       const n = D.parts[m.id].length, p = PIC[m.id];
       const pic = p ? `<img src="${p[0]}" width="${p[1]}" height="${p[2]}" alt="${esc(p[3])}" loading="lazy">`
         : `<span class="mcard-draw">${schematic(m.id, null)}<span class="mcard-draw-cap">Схема групп деталей</span></span>`;
@@ -62,7 +83,7 @@
           <div class="mcard-more" id="more-${m.id}" hidden>${specTable(m)}</div>
         </div>
       </article>`;
-    }).join("");
+    }).join("") + extraCards();
   }
 
   // ---------- catalog ----------
