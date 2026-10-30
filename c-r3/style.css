@@ -500,3 +500,5 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
   .buy input { width: 100%; }
   .tools { flex-direction: column; align-items: stretch; }
 }
+.c-p .muted { font-weight: 400; }
+.spec td { padding-top: 9px; padding-bottom: 9px; }

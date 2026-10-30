@@ -61,7 +61,7 @@
         <path d="M362 182h178"/><rect x="430" y="172" width="22" height="20"/>
         <path d="M548 182c10-34 26-44 30-38s-14 30-30 38c22-4 34 6 28 12s-24-4-28-12c-4 22-18 36-24 30s4-24 24-30z"/>
       </g>
-      <g class="sa-tags"><text x="120" y="262">Двигатель</text><text x="217" y="262">Муфта</text><text x="298" y="262">Реверс-редуктор</text><text x="490" y="214">Валопровод</text></g>
+      <g class="sa-tags"><text x="120" y="262">Двигатель</text><text x="217" y="262">Муфта</text><text x="298" y="262">Реверс-редуктор</text><text x="452" y="160">Валопровод</text></g>
       <g class="sa-badge"><rect x="180" y="20" width="240" height="40" rx="3"/><text x="300" y="46">${esc(label)}</text></g>
     </svg>`;
   }
