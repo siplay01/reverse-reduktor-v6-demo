@@ -164,3 +164,15 @@ Start: copy of `c-r13/` (tag `before-c-r14`). One enhanced version, structure an
 - Headers `art-doc` and `art-gear` are 176 px minimum height so the drawings read; `head1()` takes an optional class. Phones: accents shrink and fade, no overflow.
 Checks: `node qa/test-c-r14.cjs`, `-catalog.cjs`, `-gears.cjs`, axe 0 violations on 4 pages, 10-page x 10-width sweep in Chromium and WebKit.
 Rollback: `git rm -r c-r14` or `git checkout before-c-r14 -- .`
+
+## 2026-10-29 · C revision 15 (`c-r15/`), bolder engineering accents
+
+Start: copy of `c-r14/` (tag `before-c-r15`). Dmitry: the hero is right and stays; the flange at the model range was too modest.
+- Model range: the flange is replaced by one huge gear (derived `img/gear-giant.svg`: 40 teeth with chamfer line, rim, eight lightening holes, hub with keyway, bolt circle, pitch circle, centre lines, dimension line without numbers), 940 px, 32 percent, entering from the top right; section top padding 104 px.
+- Certificate: the same gear again at the lower left, rotated 9 degrees, 20 percent.
+- Footer (contacts and requisites): a propeller blueprint (derived `img/propeller.svg`: four blades with pitch lines, hub, tip and 0,7R circles, centre lines, dimension line) bleeding off the lower right, 20 percent.
+- Spare parts landing header: the real 3Д6 reverse gear section (`img/3d6-razrez.webp`) instead of the gear train.
+- Depth: layered soft shadow and a top highlight on model cards, certificate and tiles.
+- Unchanged: hero (r14), services, documentation header.
+Checks: `node qa/test-c-r15.cjs`, `-catalog.cjs`, `-gears.cjs`, axe 0 violations on 4 pages, 10-page x 10-width sweep (Chromium and WebKit) without overflow or errors.
+Rollback: `git rm -r c-r15` or `git checkout before-c-r15 -- .`
