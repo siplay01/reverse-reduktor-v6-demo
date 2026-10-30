@@ -574,3 +574,9 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
   .spec5 .c-p { grid-row: 4; }
 }
 @media (max-width: 700px) { .cat-bar5 .seg a { flex: 1 1 auto; justify-content: center; padding: 0 10px; font-size: 13px; } .cat-bar5 .seg a:first-child { flex-basis: 100%; border-bottom: 1px solid var(--line); } .cat-bar5 .seg a:nth-child(2) { border-left: 0; } }
+
+/* ---- revision 6: catalog page, gearbox pages with picture tiles and the list picture restored ---- */
+.all-link { font-size: 13px; font-weight: 650; color: var(--link); text-decoration-color: var(--accent); }
+.node6 { grid-template-columns: .62fr 1.38fr; }
+.node6 .node-spec { min-width: 0; }
+@media (max-width: 1100px) { .node6 { grid-template-columns: 1fr; } }

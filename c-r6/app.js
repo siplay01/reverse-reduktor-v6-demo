@@ -131,7 +131,7 @@
   const byId = (id) => D.models.find((m) => m.id === id);
   const catHash = (st) => {
     const u = new URLSearchParams(); if (st.g) u.set("g", st.g); if (st.q) u.set("q", st.q);
-    const s = u.toString(); return "#katalog" + (st.m ? "/" + byId(st.m).slug : "") + (s ? "?" + s : "");
+    const s = u.toString(); return "#katalog/" + (st.m ? byId(st.m).slug + "/spisok" : "vse") + (s ? "?" + s : "");
   };
   const nodeSelect = (key) => `<label class="fld"><span>Чертёж узла РР-300</span><select data-jump="rr-300"><option value="">Выберите…</option>${viewsOf(rr300).filter((v) => v.key !== "vse").map((v) => `<option value="${v.key}"${v.key === key ? " selected" : ""}>${v.fig ? "Рис. " + v.fig + ". " : ""}${esc(v.label)}</option>`).join("")}</select></label>`;
   // mode "list": filters act in place; "page": drawing pages, the search jumps to the list; "none": the clutch page
@@ -141,12 +141,12 @@
     const active = mode === "list" && (st.m || st.g || st.q);
     return `<div class="cat-bar cat-bar5" role="search">
       <div class="fld"><span>По редуктору</span><div class="seg" role="group" aria-label="По редуктору">` +
-        `<a href="#katalog"${mode === "list" && !st.m ? ' aria-current="true"' : ""}>Все редукторы</a>` +
-        FILTER_IDS.map((id) => `<a href="${catHash({ m: id })}"${st.m === id ? ' aria-current="true"' : ""}>${esc(byId(id).name)}</a>`).join("") + `</div></div>
+        `<a href="${mode === "list" ? "#katalog/vse" : "#katalog"}"${mode === "list" && !st.m ? ' aria-current="true"' : ""}>Все редукторы</a>` +
+        FILTER_IDS.map((id) => `<a href="${mode === "list" ? catHash({ m: id }) : "#katalog/" + byId(id).slug}"${st.m === id ? ' aria-current="true"' : ""}>${esc(byId(id).name)}</a>`).join("") + `</div></div>
       ${mode === "list" ? `<label class="fld"><span>По группе деталей</span><select data-fg><option value="">Все группы (${pool.length})</option>${groups.map(([g, n]) => `<option value="${esc(g)}"${g === st.g ? " selected" : ""}>${esc(g)} (${n})</option>`).join("")}</select></label>`
         : st.m === "rr300" ? nodeSelect(key) : `<span></span>`}
       <label class="fld"><span>Поиск</span><input type="search" placeholder="Обозначение или название" value="${esc(mode === "list" ? st.q || "" : "")}" autocomplete="off" data-fq></label>
-      <a class="reset" href="#katalog" data-reset${active ? "" : " hidden"}>Сбросить фильтры</a>
+      <a class="reset" href="#katalog/vse" data-reset${active ? "" : " hidden"}>Сбросить фильтры</a>
     </div>`;
   }
   const crumbs = (items) => `<nav class="crumbs" aria-label="Путь"><a href="#">Главная</a>${items.map(([t, h]) => `<span aria-hidden="true">/</span>${h ? `<a href="${h}">${esc(t)}</a>` : `<span aria-current="page">${esc(t)}</span>`}`).join("")}</nav>`;
@@ -158,6 +158,28 @@
   const head1 = (title, aside = "", sub = "") => `<header class="cat-head compact"><div><h1 tabindex="-1">${title}</h1>${sub ? `<p class="muted">${sub}</p>` : ""}</div>${aside}</header>`;
   const soonFig = (what) => `<figure class="node-fig"><div class="sheet soon">${soonArt("Чертёж скоро появится")}</div><figcaption>${what}: заводской чертёж готовится к публикации. Подбор сейчас: по обозначению в перечне.</figcaption></figure>`;
   const PRICE_NOTE = "Цены за единицу по прайсу 2025 г., уточняйте при заказе.";
+
+  // r6: restored from r4 (Dmitry: the catalog page and the pictures had to stay)
+  const CATS = [
+    { slug: "rr-300", short: "РР-300", title: "Для реверс-редуктора гидравлического РР-300", note: "26 узлов с чертежами и спецификациями" },
+    { slug: "rr-238", short: "РР-238", title: "Для реверс-редуктора гидравлического РР-238", note: `${D.parts.rr238.length} позиции` },
+    { slug: "3d6", short: "3Д6", title: "Для реверс-редуктора механического 3Д6", note: `${D.parts["3d6"].length} позиций по группам` },
+    { slug: "3d12", short: "3Д12", title: "Для реверс-редуктора механического 3Д12", note: `${D.parts["3d12"].length} позиций по группам` },
+    { slug: "mufta-ms", short: "Муфта МС", title: "Для муфты сцепления", note: "гидравлическая СБ525-01-14, механическая СБ1226-00-2" },
+  ];
+  function catsPage() {
+    return crumbs([["Запасные части"]]) + head1("Запасные части", `<a class="all-link" href="#katalog/vse">Все запчасти одним списком (${D.catalog.length})</a>`) +
+      `<ul class="cats">${CATS.map((c) => `<li><a href="#katalog/${c.slug}"><b>${esc(c.title)}</b><span>${esc(c.note)}</span></a></li>`).join("")}</ul>`;
+  }
+  function indexPage(m) {
+    const vs = viewsOf(m);
+    const href = (v) => v.key === "vse" ? catHash({ m: m.id }) : v.key.startsWith("gr-") ? catHash({ m: m.id, g: v.label }) : `#m/${m.slug}/${v.key}`;
+    const tiles = vs.map((v) => `<a class="tile" href="${href(v)}">` +
+      (v.th ? `<img src="${v.th}" width="420" height="306" alt="" loading="lazy">` : `<span class="tile-ph">${soonArt("Чертёж скоро появится")}</span>`) +
+      `<span class="tile-k">${v.fig ? "Рис. " + v.fig : v.num ? "Группа" : "Перечень"}<span>${v.n}&nbsp;поз.</span></span><span class="tile-t">${esc(v.label)}</span></a>`).join("");
+    return crumbs([["Запасные части", "#katalog"], [m.name]]) + bar({ m: m.id }, "page") +
+      head1(`Запчасти ${esc(m.name)} ${sku(m.designation)}`) + `<div class="tiles">${tiles}</div>`;
+  }
 
   function muftaPage() {
     return crumbs([["Запасные части", "#katalog"], ["Муфта сцепления"]]) + bar({}, "none") + head1("Муфта сцепления МС") +
@@ -242,13 +264,16 @@
     viewsOf(rr300).filter((v) => v.key !== "vse").map((v) => `<a class="tile" href="#m/rr-300/${v.key}"><img src="${v.th}" width="420" height="306" alt="" loading="lazy"><span class="tile-k">${v.fig ? "Рис. " + v.fig : "Разрез"}<span>${v.n}&nbsp;поз.</span></span><span class="tile-t">${esc(v.label)}</span></a>`).join("") + `</div></details>`;
   function catalogPage(st) {
     const list = filtered(st), m = st.m ? byId(st.m) : null;
-    return crumbs(m ? [["Запасные части", "#katalog"], [m.name]] : [["Запасные части"]]) + bar(st, "list") +
-      head1(`Запасные части${m ? ` ${esc(m.name)} ${sku(m.designation)}` : ""}`, `<span class="h-count" data-count>${list.length}&nbsp;поз.</span>`) +
-      (st.m === "rr300" ? nodesStrip() : "") +
+    const fig = !m ? "" : m.id === "rr300"
+      ? `<figure class="node-fig"><div class="sheet"><img src="${D.front}" width="1200" height="1328" alt="Реверс-редуктор РР-300, вид по руководству по эксплуатации" loading="lazy"></div><figcaption>Подбор по позициям: <a href="#katalog/rr-300">узлы каталога</a>.</figcaption></figure>`
+      : soonFig(m.name);
+    return crumbs(m ? [["Запасные части", "#katalog"], [m.name, `#katalog/${m.slug}`], [st.g || "Все детали"]] : [["Запасные части", "#katalog"], ["Все запчасти"]]) + bar(st, "list") +
+      head1(`${m ? `Запасные части ${esc(m.name)} ${sku(m.designation)}` : "Все запчасти"}`, `<span class="h-count" data-count>${list.length}&nbsp;поз.</span>`) +
+      (m ? `<div class="node node6">${fig}` : "") +
       `<section class="node-spec cat-list" aria-label="Перечень деталей"><div class="tbl"><table class="spec spec5"><thead><tr><th scope="col">Обозначение</th><th scope="col">Наименование</th><th scope="col" class="c-ap">Применяемость</th><th scope="col" class="c-g">Группа</th><th scope="col" class="c-p">Цена за ед.</th><th scope="col" class="c-buy">Количество</th></tr></thead><tbody data-rows>${rowsHtml(list)}</tbody></table>
         <p class="none" data-none${list.length ? " hidden" : ""}>Ничего не найдено. Проверьте обозначение или пришлите его: <a href="mailto:${D.company.email}">${D.company.email}</a>, ${D.company.phone}.</p></div>
         <ul class="foot-notes"><li>Применяемость: по каталогу деталей РР-300 (ссылка на рисунок) или по данным прежнего каталога. «Уточните при заказе»: связь с несколькими моделями документально не подтверждена. «Зависит от исполнения»: деталь входит не во все исполнения РР-300.</li><li>${PRICE_NOTE}</li></ul>
-      </section>`;
+      </section>` + (m ? `</div>` : "");
   }
   let cstate = null;
   function refreshList() {
@@ -279,7 +304,9 @@
     const box = $("[data-cat]"), [, slug, key] = path, q = qs.get("q") || "", hl = qs.get("hl") || "";
     let html;
     if (path[0] === "arhiv") html = scansPage();
+    else if (path[0] === "katalog" && !slug) html = catsPage();
     else if (path[0] === "katalog" && slug === "mufta-ms") html = muftaPage();
+    else if (path[0] === "katalog" && slug !== "vse" && path[2] !== "spisok" && model(slug)) html = indexPage(model(slug));
     else if (path[0] === "katalog") { const m = model(slug); cstate = { m: m && FILTER_IDS.includes(m.id) ? m.id : null, g: qs.get("g") || "", q }; html = catalogPage(cstate); }
     else if (key === "obshchiy") html = overviewPage(rr300);
     else html = nodePage(rr300, D.nodes.find((n) => `ris-${n.fig}` === key) || D.nodes[0], compare, q);
@@ -292,6 +319,9 @@
 
   // old catalog addresses (r1-r4) -> the unified list; drawing pages of РР-300 stay
   function legacyHash(path, qs) {
+    // r5 list address #katalog/<slug>?g=&q= -> r6 list address
+    if (path[0] === "katalog" && model(path[1]) && !path[2] && (qs.get("g") || qs.get("q"))) return catHash({ m: model(path[1]).id, g: qs.get("g") || "", q: qs.get("q") || "" });
+    if (path[0] === "katalog" && !path[1] && (qs.get("g") || qs.get("q"))) return catHash({ g: qs.get("g") || "", q: qs.get("q") || "" });
     if (path[0] !== "m") return null;
     const m = model(path[1]), key = path[2] || "";
     if (m && m.id === "rr300" && (key.startsWith("ris-") || key === "obshchiy")) return null;
