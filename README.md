@@ -11,6 +11,7 @@ ordering info at the bottom of the first page.
 - `c-r1/` C revision 1 (2026-10-29): C's markup and engine unchanged (`c-r1/index.html` loads `../c/app.js`), only `c-r1/style.css` differs: the «Naval Authority» skin from `~/Downloads/reduktor_v5_design_lab.html` (porcelain #f5f5f2, white panels, navy #102b3a strip and hero, bronze #b78e5a, action #174758, 15 px base, 13 px nav, 11 px tracked labels, 3 px radius). Light only, like the lab page (`color-scheme: light`), so a Mac in dark mode still shows the Naval palette. `c/` is kept as the previous state.
 - `c-r2/` C revision 2 (2026-10-29): Dmitry's content corrections on top of revision 1 (own copies of markup, style and engine). Every step and the rollback commands: `CHANGELOG.md`.
 - `c-r3/` C revision 3 (2026-10-29): second round of corrections (catalog with price and quantity, coming-soon illustration, services tiles, documentation archive with the catalog scans). Steps and rollback: `CHANGELOG.md`.
+- `c-r4/` C revision 4 (2026-10-29): third round (РР-238 restored, neutral «скоро появится» placeholders, services as a vertical list, compact technical documentation). Steps and rollback: `CHANGELOG.md`.
 - `index.html`: chooser between A, B, C and its revisions.
 - `shared/schema.js`: part groups and the generic group diagram, used by all three.
 - `shared/app.js`: one engine for both (hash routes, picker, drawing/list sync, search, request list). `shared/data.js` is generated.
@@ -33,6 +34,7 @@ node qa/test-c.cjs                   # functional C, Chromium + WebKit
 DESIGN=c-r1 node qa/test-c.cjs       # same checks on C revision 1
 node qa/test-c-r2.cjs                # revision 2 (corrections + catalog), Chromium + WebKit
 node qa/test-c-r3.cjs                # revision 3, Chromium + WebKit
+node qa/test-c-r4.cjs                # revision 4, Chromium + WebKit
 node qa/axe.cjs                      # axe WCAG 2.2 AA, light + dark
 node qa/shots.cjs ab home,m/3d6      # screenshots + overflow check at 1440 and 390 into qa/shots/
 ```

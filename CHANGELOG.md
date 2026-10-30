@@ -2,6 +2,21 @@
 
 Every revision lives in its own folder; older folders are never edited. Git history (local repo in this folder) records each step.
 
+## 2026-10-29 · C revision 4 (`c-r4/`), Dmitry's third round
+
+Start: exact copy of `c-r3/`. Baseline tag `before-c-r4`.
+
+| Step | What changed | Files |
+| --- | --- | --- |
+| 1 | РР-238 back in «Наша продукция» (card with photo and specs), in «Запасные части» (chooser «Для реверс-редуктора гидравлического РР-238», switch, search) and in the footer. | `c-r4/app.js`, `c-r4/index.html` |
+| 2, 2b | My drive-line drawing replaced by a neutral placeholder following the common shop pattern (research: Tavily; Exa was rate-limited): light grey panel, soft generic gearbox silhouette, faint diagonal «СКОРО» watermark, label «Фото скоро появится» (product cards: муфта, new model) or «Чертёж скоро появится» (catalog pages and group tiles of РР-238, 3Д6, 3Д12, муфта). Group tiles no longer show bare numbers. | `c-r4/app.js`, `c-r4/style.css` |
+| 3, 3b | «Услуги» as a vertical numbered list (01-05, icon, name); heading and the РКО note on the left. | `c-r4/style.css` |
+| 4 | Section renamed «Техническая документация» (same as the tab); certificate removed from that list; compact 2x2 list (manual, catalog РР-300, repair instructions «В подготовке», catalogs 3Д6/3Д12/муфт «В подготовке»). Certificate block on the home page unchanged. | `c-r4/index.html`, `c-r4/style.css` |
+
+Checks: `node qa/test-c-r4.cjs` passed (Chromium + WebKit); `node qa/axe.cjs` 0 violations on all versions; no horizontal overflow at 390 and 1024 in WebKit; revision 3 test still passes.
+
+Rollback: older folders untouched; one step: `git revert <commit>` (messages start with «c-r4 step N»); everything: `git checkout before-c-r4 -- .`
+
 ## 2026-10-29 · C revision 3 (`c-r3/`), Dmitry's second round
 
 Start: exact copy of `c-r2/`. Baseline tag `before-c-r3`. Shared data gained two fields (`prices`, `scans`); older designs ignore them and their tests still pass.
