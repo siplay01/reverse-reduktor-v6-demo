@@ -462,3 +462,41 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .scans img { width: 100%; height: auto; background: #fff; }
 .scans b { color: var(--accent-text); }
 @media (max-width: 700px) { .arch li { grid-template-columns: 1fr; gap: 6px; } .arch-a { justify-content: flex-start; margin-top: 6px; } .scans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* catalog, revision 3: compact header, one tool row, price + quantity, page scroll with a pinned table header */
+.cat-head.compact { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; padding: 18px 0 14px; margin-bottom: 4px; }
+.cat-head.compact h1 { font-size: clamp(20px, 1.9vw, 26px); letter-spacing: -.025em; margin: 0; line-height: 1.2; }
+.cat-head.compact h1 .sku { font-size: .7em; font-weight: 500; color: var(--sub); margin-left: 6px; letter-spacing: -.02em; }
+.cat-head.compact .muted { font-size: 13px; margin-top: 4px; }
+.h-fig { color: var(--accent-text); margin-right: 6px; }
+.h-count { color: var(--sub); font-size: 13px; }
+.crumbs { padding: 16px 0 12px; }
+.cat-bar { padding: 14px 16px; }
+.tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.tool-isp { flex: 1 1 320px; display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--sub); min-width: 0; }
+.tool-isp select { height: 38px; padding: 0 8px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 2px; font-size: 13px; text-transform: none; letter-spacing: 0; font-weight: 400; width: 100%; }
+.tool-f { flex: 1 1 200px; }
+.tool-f input { height: 38px; width: 100%; padding: 0 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 2px; color: var(--ink); font-size: 13px; }
+.tools .btn-ghost { min-height: 38px; }
+.tbl, .node-wide .node-spec .tbl, .node:not(:has(.isp)) .tbl { max-height: none; overflow: visible; }
+.spec th { top: 85px; z-index: 2; }
+.c-p { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 650; }
+.spec th.c-p, .spec th.c-buy { text-align: right; }
+.c-buy { width: 1%; white-space: nowrap; text-align: right; }
+.buy { display: inline-flex; gap: 6px; align-items: center; }
+.buy input { width: 52px; height: 30px; padding: 0 6px; border: 1px solid var(--line); border-radius: 2px; background: var(--panel); color: var(--ink); font-size: 12px; text-align: center; }
+.buy input:disabled { opacity: .4; }
+.spec tr.na .c-p { opacity: .45; }
+.node { grid-template-columns: .8fr 1.2fr; }
+.node-fig { top: 100px; }
+.node-fig .links { flex-direction: row; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; }
+.sheet.soon { padding: 0; overflow: hidden; }
+.panel-msg { padding: 22px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; }
+@media (max-width: 1100px) { .spec th { top: 85px; } .node { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
+  .spec .c-p { grid-column: 1 / 3; grid-row: 4; text-align: left; font-size: 13px; }
+  .spec .c-p::before { content: "цена: "; font-weight: 400; color: var(--sub); }
+  .spec .c-buy { grid-column: 3; grid-row: 1 / span 4; align-self: center; width: auto; }
+  .buy { flex-direction: column; align-items: stretch; }
+  .buy input { width: 100%; }
+  .tools { flex-direction: column; align-items: stretch; }
+}

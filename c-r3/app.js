@@ -17,10 +17,10 @@
   let cart = [];
   try { cart = JSON.parse(localStorage.getItem(KEY)) || []; } catch { cart = []; }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch {} renderCart(); };
-  function add(des, name, where) {
+  function add(des, name, where, q = 1) {
     const it = cart.find((c) => c.des === des && c.where === where);
-    if (it) it.q += 1; else cart.push({ des, name, where, q: 1 });
-    save(); toast(`${des} в списке запроса`);
+    if (it) it.q += q; else cart.push({ des, name, where, q });
+    save(); toast(`${des}: ${q} шт. в списке запроса`);
   }
   const cartText = () => cart.map((c, i) => `${i + 1}. ${c.des} ${c.name} (${c.where}), ${c.q} шт.`).join("\n");
   function renderCart() {
@@ -144,33 +144,40 @@
   }
   const crumbs = (items) => `<nav class="crumbs" aria-label="Путь"><a href="#">Главная</a>${items.map(([t, h]) => `<span aria-hidden="true">/</span>${h ? `<a href="${h}">${esc(t)}</a>` : `<span aria-current="page">${esc(t)}</span>`}`).join("")}</nav>`;
 
+  // Revision 3 catalog: compact one-line headers, no repeated labels, price per unit + quantity + «В запрос» last,
+  // no mass column, page scroll instead of an inner scroll box, the same layout for models without factory drawings.
+  const nf = new Intl.NumberFormat("ru-RU");
+  const price = (des) => (D.prices[des] ? `${nf.format(D.prices[des])}&nbsp;₽` : `<span class="muted">по запросу</span>`);
+  const head1 = (title, aside = "", sub = "") => `<header class="cat-head compact"><div><h1 tabindex="-1">${title}</h1>${sub ? `<p class="muted">${sub}</p>` : ""}</div>${aside}</header>`;
+  const soonFig = (what) => `<figure class="node-fig"><div class="sheet soon">${soonArt("Чертёж в подготовке")}</div><figcaption>${what}: заводской чертёж готовится к публикации. Подбор сейчас: по обозначению в перечне.</figcaption></figure>`;
+  const PRICE_NOTE = "Цены за единицу по прайсу 2025 г., уточняйте при заказе.";
+
   function catsPage() {
-    return crumbs([["Запасные части"]]) +
-      `<header class="cat-head"><p class="kicker">Каталоги запасных частей</p><h1 tabindex="-1">Запасные части</h1>
-       <p class="muted">Выберите каталог: откроются узлы, чертежи и перечни деталей с обозначениями.</p></header>
-      <ul class="cats">${CATS.map((c) => `<li><a href="#katalog/${c.slug}"><b>${esc(c.title)}</b><span>${esc(c.note)}</span></a></li>`).join("")}</ul>`;
+    return crumbs([["Запасные части"]]) + head1("Запасные части") +
+      `<ul class="cats">${CATS.map((c) => `<li><a href="#katalog/${c.slug}"><b>${esc(c.title)}</b><span>${esc(c.note)}</span></a></li>`).join("")}</ul>`;
   }
   function muftaPage() {
-    return crumbs([["Запасные части", "#katalog"], ["Муфта сцепления"]]) + bar(null, "") +
-      `<header class="cat-head"><p class="kicker">Муфта сцепления МС</p><h1 tabindex="-1">Запасные части для муфты сцепления</h1>
-       <p class="muted">Муфты сцепления: гидравлическая ${sku("СБ525-01-14")} и механическая ${sku("СБ1226-00-2")}. Каталог деталей муфт на сайте пока не опубликован: пришлите обозначение детали, подберём по каталогу.</p></header>
-      <p class="mufta-contacts"><a class="btn" href="mailto:${D.company.email}?subject=${encodeURIComponent("Запчасти для муфты сцепления")}">Написать на ${D.company.email}</a><a class="btn btn-line" href="tel:${D.company.tel}">${D.company.phone}</a></p>`;
+    return crumbs([["Запасные части", "#katalog"], ["Муфта сцепления"]]) + bar(null, "") + head1("Муфта сцепления МС") +
+      `<div class="node">${soonFig("Муфты сцепления")}
+        <section class="node-spec"><div class="panel-msg"><p>Муфты сцепления: гидравлическая ${sku("СБ525-01-14")} и механическая ${sku("СБ1226-00-2")}.</p>
+          <p class="muted">Перечень деталей муфт готовится. Пришлите обозначение детали: подберём по каталогу.</p>
+          <p class="mufta-contacts"><a class="btn btn-sm" href="mailto:${D.company.email}?subject=${encodeURIComponent("Запчасти для муфты сцепления")}">Написать на ${D.company.email}</a><a class="btn btn-line btn-sm" href="tel:${D.company.tel}">${D.company.phone}</a></p></div></section>
+      </div>`;
   }
 
   function indexPage(m) {
     const vs = viewsOf(m);
     const tiles = vs.map((v) => `<a class="tile" href="#m/${m.slug}/${v.key}">` +
-      (v.th ? `<img src="${v.th}" width="420" height="306" alt="" loading="lazy">` : v.num ? `<span class="tile-num">${v.num}</span>` : `<span class="tile-num">∑</span>`) +
+      (v.th ? `<img src="${v.th}" width="420" height="306" alt="" loading="lazy">` : `<span class="tile-num">${v.num || "∑"}</span>`) +
       `<span class="tile-k">${v.fig ? "Рис. " + v.fig : v.num ? "Группа" : "Перечень"}<span>${v.n}&nbsp;поз.</span></span><span class="tile-t">${esc(v.label)}</span></a>`).join("");
-    const side = m.id === "rr300" ? "" : `<figure class="idx-schema"><div class="sheet">${schematic(m.id, null)}</div><figcaption>Схема групп деталей ${esc(m.name)}. Номер на схеме соответствует группе.</figcaption></figure>`;
     return crumbs([["Запасные части", "#katalog"], [m.name]]) + bar(m, "") +
-      `<header class="cat-head"><p class="kicker">${esc(m.name)} ${sku(m.designation)} · ${cap(m.kind)}</p><h1>Каталог запчастей ${esc(m.name)}</h1>
-       <p class="muted">${m.id === "rr300" ? "26 сборочных узлов по заводскому каталогу. Выберите узел: откроется чертёж и спецификация." : `${D.parts[m.id].length} позиций по группам. Нет нужной детали: пришлите обозначение с таблички или из паспорта.`}</p></header>` +
-      `<div class="idx${side ? " idx-side" : ""}">${side}<div class="tiles">${tiles}</div></div>`;
+      head1(`Запчасти ${esc(m.name)} ${sku(m.designation)}`) + `<div class="tiles">${tiles}</div>`;
   }
 
-  function addBtn(des, name, where, off) {
-    return `<button type="button" class="btn-add" data-add="${esc(des)}" data-name="${esc(name)}" data-where="${esc(where)}"${off ? " disabled" : ""}>В запрос</button>`;
+  function buyCell(des, name, where, off) {
+    return `<td class="c-buy"><span class="buy"><label class="sr" for="q-${esc(des)}">Количество, ${esc(des)}</label>` +
+      `<input id="q-${esc(des)}" type="number" min="1" value="1" inputmode="numeric" data-qty${off ? " disabled" : ""}>` +
+      `<button type="button" class="btn-add" data-add="${esc(des)}" data-name="${esc(name)}" data-where="${esc(where)}"${off ? " disabled" : ""}>В запрос</button></span></td>`;
   }
 
   function nodePage(m, nd, compare, q) {
@@ -178,38 +185,34 @@
     if (!nd.vars.includes(isp)) isp = nd.vars[0];
     const vi = nd.vars.indexOf(isp);
     const head = compare
-      ? `<th scope="col" class="c-pos">Поз.</th><th scope="col">Заводское обозначение</th><th scope="col">Наименование</th>${nd.vars.map((c) => `<th scope="col" class="c-q">${esc(c)}</th>`).join("")}`
-      : `<th scope="col" class="c-pos">Поз.</th><th scope="col">Заводское обозначение</th><th scope="col">Наименование</th><th scope="col" class="c-q">Кол. на изделие <span class="nw">${esc(rr300.designation + (isp === "-" ? "" : isp))}</span></th><th scope="col"><span class="sr">Запрос</span></th><th scope="col" class="c-m">Масса, кг</th>`;
+      ? `<th scope="col" class="c-pos">Поз.</th><th scope="col">Обозначение</th><th scope="col">Наименование</th>${nd.vars.map((c) => `<th scope="col" class="c-q">${esc(c)}</th>`).join("")}`
+      : `<th scope="col" class="c-pos">Поз.</th><th scope="col">Обозначение</th><th scope="col">Наименование</th><th scope="col" class="c-q">В изделии</th><th scope="col" class="c-p">Цена за ед.</th><th scope="col" class="c-buy">Количество</th>`;
     const rows = nd.rows.map(([pos, des, name], r) => {
-      const q = nd.qa[r], mark = nd.note[r] ? `<sup>${esc(nd.note[r])}</sup>` : "";
+      const qa = nd.qa[r], mark = nd.note[r] ? `<sup>${esc(nd.note[r])}</sup>` : "";
       const cells = `<td class="c-pos">${pos}</td><td class="c-des">${sku(des)}${mark}</td><td class="c-name">${esc(name)}</td>`;
-      if (compare) return `<tr data-des="${esc(des)}">${cells}${q.map((x) => `<td class="c-q">${x ?? "—"}</td>`).join("")}</tr>`;
-      const qn = q[vi];
-      return `<tr data-des="${esc(des)}"${qn == null ? ' class="na"' : ""}>${cells}<td class="c-q">${qn ?? "—"}</td>` +
-        `<td class="c-add">${addBtn(des, name, `РР-300, рис. ${nd.fig}, поз. ${pos}, исп. ${isp}`, qn == null)}</td><td class="c-m">${esc(nd.mass[r] || "")}</td></tr>`;
+      if (compare) return `<tr data-des="${esc(des)}">${cells}${qa.map((x) => `<td class="c-q">${x ?? "—"}</td>`).join("")}</tr>`;
+      const qn = qa[vi];
+      return `<tr data-des="${esc(des)}"${qn == null ? ' class="na"' : ""}>${cells}<td class="c-q">${qn ?? "—"}</td><td class="c-p">${price(des)}</td>` +
+        buyCell(des, name, `РР-300, рис. ${nd.fig}, поз. ${pos}, исп. ${isp}`, qn == null) + `</tr>`;
     }).join("");
-    const foot = Object.entries(nd.foot).map(([k, t]) => `<li><sup>${esc(k)}</sup> ${esc(t)}</li>`).join("");
+    const notes = [...Object.entries(nd.foot).map(([k, t]) => `<li><sup>${esc(k)}</sup> ${esc(t)}</li>`),
+      compare ? "" : `<li>«—» в графе «В изделии»: деталь не входит в выбранное исполнение. ${PRICE_NOTE}</li>`].join("");
+    const pn = `<nav class="pn" aria-label="Соседние узлы">${prev ? `<a href="#m/rr-300/ris-${prev.fig}">← Рис. ${prev.fig}</a>` : ""}${next ? `<a href="#m/rr-300/ris-${next.fig}">Рис. ${next.fig} →</a>` : ""}</nav>`;
     return crumbs([["Запасные части", "#katalog"], ["РР-300", "#katalog/rr-300"], [`Рис. ${nd.fig}`]]) + bar(m, `ris-${nd.fig}`) +
-      `<header class="cat-head row"><div><p class="kicker">РР-300 ${sku(rr300.designation)} · рис. ${nd.fig} из ${D.nodes.length}</p><h1 tabindex="-1">${esc(nd.title)}</h1>
-        <p class="muted">Позиций в спецификации: ${nd.rows.length}.</p></div>
-        <nav class="pn" aria-label="Соседние узлы">${prev ? `<a href="#m/rr-300/ris-${prev.fig}">← Рис. ${prev.fig}</a>` : ""}<a href="#katalog/rr-300">Все узлы</a>${next ? `<a href="#m/rr-300/ris-${next.fig}">Рис. ${next.fig} →</a>` : ""}</nav></header>
-      <div class="node">
+      head1(`<span class="h-fig">Рис. ${nd.fig}</span> ${esc(nd.title)}`, pn) +
+      `<div class="node">
         <figure class="node-fig"><a class="sheet zoom" href="${nd.img2}" target="_blank" rel="noopener"><img src="${nd.img}" srcset="${nd.img} 900w, ${nd.img2} 2000w" sizes="(min-width: 1000px) 34vw, 100vw" width="${nd.w}" height="${nd.h}" alt="Рис. ${nd.fig}. ${esc(nd.title)}"></a>
-          <figcaption>Рис. ${nd.fig}. Номера на чертеже соответствуют графе «Поз.»</figcaption>
           <p class="links"><a class="ilink" href="${nd.img2}" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5"/></svg>Увеличить чертёж</a>` +
-          (nd.spec ? `<a class="ilink" href="${nd.spec}" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2h7l4 4v12H5z M12 2v4h4M8 10h5M8 13h5"/></svg>Скан спецификации из каталога</a>` : "") + `</p></figure>
-        <section class="node-spec" aria-labelledby="spec-h">
-          <h2 id="spec-h">Спецификация</h2>
-          <div class="isp">
-            <label for="isp"><b>Исполнение реверс-редуктора</b></label>
-            <select id="isp" data-isp${compare ? " disabled" : ""}>${nd.vars.map((c) => `<option value="${esc(c)}"${c === isp ? " selected" : ""}>${esc(varLabel(c))}</option>`).join("")}</select>
-            <p class="muted">${compare ? "Количество по всем исполнениям узла. Прочерк: деталь в исполнение не входит." : `Количество в таблице указано на одно изделие исполнения ${sku(rr300.designation + (isp === "-" ? "" : isp))}. Прочерк: деталь в это исполнение не входит.`}</p>
-            <button type="button" class="btn-ghost" data-compare aria-pressed="${compare}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h14v14H3zM3 8h14M8 3v14"/></svg>${compare ? "Показать одно исполнение" : "Сравнить все исполнения"}</button>
+          (nd.spec ? `<a class="ilink" href="${nd.spec}" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2h7l4 4v12H5z M12 2v4h4M8 10h5M8 13h5"/></svg>Скан спецификации</a>` : "") + `</p></figure>
+        <section class="node-spec" aria-label="Перечень деталей">
+          <div class="tools">
+            <label class="tool-isp"><span>Исполнение</span><select id="isp" data-isp${compare ? " disabled" : ""}>${nd.vars.map((c) => `<option value="${esc(c)}"${c === isp ? " selected" : ""}>${esc(varLabel(c))}</option>`).join("")}</select></label>
+            <label class="tool-f"><span class="sr">Фильтр по перечню</span><input type="search" placeholder="Фильтр по перечню" value="${esc(q)}" data-filter autocomplete="off"></label>
+            <button type="button" class="btn-ghost" data-compare aria-pressed="${compare}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h14v14H3zM3 8h14M8 3v14"/></svg>${compare ? "Одно исполнение" : "Все исполнения"}</button>
           </div>
-          <label class="fld fld-in"><span class="sr">Фильтр по спецификации</span><input type="search" placeholder="Фильтр: обозначение или название" value="${esc(q)}" data-filter autocomplete="off"></label>
           <div class="tbl"><table class="spec${compare ? " cmp" : ""}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
             <p class="none" hidden>В этом узле такой позиции нет.</p></div>
-          ${foot ? `<ul class="foot-notes">${foot}</ul>` : ""}
+          ${notes ? `<ul class="foot-notes">${notes}</ul>` : ""}
         </section>
       </div>`;
   }
@@ -217,8 +220,7 @@
   function overviewPage(m) {
     const s = D.section;
     return crumbs([["Запасные части", "#katalog"], ["РР-300", "#katalog/rr-300"], ["Общий вид"]]) + bar(m, "obshchiy") +
-      `<header class="cat-head"><p class="kicker">РР-300 ${sku(rr300.designation)} · руководство РР-300.РЭ, рис. 1</p><h1 tabindex="-1">Общий вид, продольный разрез</h1>
-       <p class="muted">Нажмите строку перечня: номера отметятся на разрезе. Детали с обозначениями: в <a href="#katalog/rr-300">узлах каталога</a>.</p></header>
+      head1("Общий вид, продольный разрез", "", `Нажмите строку перечня: номера отметятся на разрезе. Детали с ценами: в <a href="#katalog/rr-300">узлах каталога</a>.`) + `
       <div class="node node-wide">
         <figure class="node-fig"><div class="sheet pts"><img src="${s.src}" srcset="${s.src} 1200w, ${s.src2} 2400w" sizes="(min-width: 1000px) 55vw, 100vw" width="${s.w}" height="${s.h}" alt="Продольный разрез реверс-редуктора РР-300 с номерами позиций">` +
           s.callouts.map(([n, x, y]) => `<button type="button" class="pt" data-n="${n}" style="left:${x}%;top:${y}%" tabindex="-1" aria-hidden="true"></button>`).join("") + `</div></figure>
@@ -232,17 +234,17 @@
     const vs = viewsOf(m), v = vs.find((x) => x.key === key) || vs[0], g = v.key === "vse" ? null : v.label;
     const list = D.parts[m.id].filter((p) => !g || p[2] === g);
     const fig = m.id === "rr300"
-      ? `<div class="sheet"><img src="${D.front}" width="1200" height="1328" alt="Реверс-редуктор РР-300, вид по руководству по эксплуатации" loading="lazy"></div><figcaption>Подбор по позициям: <a href="#katalog/rr-300">узлы каталога</a>.</figcaption>`
-      : `<div class="sheet">${schematic(m.id, g)}</div><figcaption>Схема групп деталей ${esc(m.name)}. Нажмите зону на схеме, чтобы открыть группу.</figcaption>`;
-    const rows = list.map(([des, name, grp]) => `<tr data-des="${esc(des)}" data-g="${esc(grp)}"><td class="c-des">${sku(des)}</td><td class="c-name">${esc(name)}</td>${g ? "" : `<td class="c-g">${esc(grp)}</td>`}<td class="c-add">${addBtn(des, name, m.name)}</td></tr>`).join("");
+      ? `<figure class="node-fig"><div class="sheet"><img src="${D.front}" width="1200" height="1328" alt="Реверс-редуктор РР-300, вид по руководству по эксплуатации" loading="lazy"></div><figcaption>Подбор по позициям: <a href="#katalog/rr-300">узлы каталога</a>.</figcaption></figure>`
+      : soonFig(m.name);
+    const rows = list.map(([des, name, grp]) => `<tr data-des="${esc(des)}" data-g="${esc(grp)}"><td class="c-des">${sku(des)}</td><td class="c-name">${esc(name)}</td>${g ? "" : `<td class="c-g">${esc(grp)}</td>`}<td class="c-p">${price(des)}</td>` + buyCell(des, name, m.name) + `</tr>`).join("");
     return crumbs([["Запасные части", "#katalog"], [m.name, `#katalog/${m.slug}`], [v.label]]) + bar(m, v.key) +
-      `<header class="cat-head"><p class="kicker">${esc(m.name)} ${sku(m.designation)} · ${cap(m.kind)}</p><h1 tabindex="-1">${esc(v.label)}</h1><p class="muted">Позиций: ${list.length}.</p></header>
-      <div class="node">
-        <figure class="node-fig">${fig}</figure>
-        <section class="node-spec">
-          <label class="fld fld-in"><span class="sr">Фильтр по списку</span><input type="search" placeholder="Фильтр: обозначение или название" value="${esc(q)}" data-filter autocomplete="off"></label>
-          <div class="tbl"><table class="spec"><thead><tr><th scope="col">Заводское обозначение</th><th scope="col">Наименование</th>${g ? "" : `<th scope="col" class="c-g">Группа</th>`}<th scope="col"><span class="sr">Запрос</span></th></tr></thead><tbody>${rows}</tbody></table>
+      head1(`${esc(m.name)}: ${esc(v.label.toLowerCase())}`, `<span class="h-count">${list.length}&nbsp;поз.</span>`) +
+      `<div class="node">${fig}
+        <section class="node-spec" aria-label="Перечень деталей">
+          <div class="tools"><label class="tool-f"><span class="sr">Фильтр по перечню</span><input type="search" placeholder="Фильтр по перечню" value="${esc(q)}" data-filter autocomplete="off"></label></div>
+          <div class="tbl"><table class="spec"><thead><tr><th scope="col">Обозначение</th><th scope="col">Наименование</th>${g ? "" : `<th scope="col" class="c-g">Группа</th>`}<th scope="col" class="c-p">Цена за ед.</th><th scope="col" class="c-buy">Количество</th></tr></thead><tbody>${rows}</tbody></table>
           <p class="none" hidden>Ничего не найдено. Пришлите обозначение: <a href="mailto:${D.company.email}">${D.company.email}</a>.</p></div>
+          <ul class="foot-notes"><li>${PRICE_NOTE}</li></ul>
         </section>
       </div>`;
   }
@@ -319,7 +321,8 @@
     const t = e.target;
     const more = t.closest("[data-more]");
     if (more) { const box = document.getElementById(`more-${more.dataset.more}`); box.hidden = !box.hidden; more.setAttribute("aria-expanded", !box.hidden); }
-    const a = t.closest("[data-add]"); if (a && !a.disabled) add(a.dataset.add, a.dataset.name, a.dataset.where);
+    const a = t.closest("[data-add]");
+    if (a && !a.disabled) { const qi = a.parentElement.querySelector("[data-qty]"); add(a.dataset.add, a.dataset.name, a.dataset.where, Math.max(1, parseInt(qi?.value, 10) || 1)); }
     if (t.closest("[data-compare]")) { compare = !compare; route.last = null; const y = scrollY; route(); scrollTo(0, y); }
     if (t.closest("[data-cart-open]")) { renderCart(); $("#cart").showModal(); }
     if (t.closest("[data-cart-close]") || t.id === "cart") $("#cart").close();
