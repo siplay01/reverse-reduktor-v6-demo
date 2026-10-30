@@ -69,6 +69,33 @@ out_nodes = [{
     "spec": asset(n["spec"]["f"]["src"]) if n.get("spec") else None,
 } for n in nodes]
 
+def unified_catalog():
+    """One record per part. models = associations as recorded in the sources (not proof of interchangeability).
+    src: how the record is backed: factory = РР-300 catalog table (scan-checked), ocr = РР-300 catalog index (OCR),
+    old = the old store revers-remont.ru, sister = revers-reduktor.ru (same company). figs = РР-300 catalog figures,
+    vardep = quantity differs between РР-300 variants in at least one figure (applicability depends on the variant)."""
+    figs, vardep = {}, set()
+    for n in nodes:
+        for r in n["rows"]:
+            figs.setdefault(r["designation"], []).append(n["figure"])
+            q = r["qty"]
+            if any(v is None for v in q) and any(v is not None for v in q):
+                vardep.add(r["designation"])
+    src_of = {"подтверждено сканом каталога": "factory", "OCR каталога, не сверено": "ocr",
+              "данные исходного сайта": "old", "сайт той же компании (revers-reduktor.ru)": "sister"}
+    out = []
+    for p in sorted(parts, key=lambda p: p["designation"]):
+        rec = {"des": p["designation"], "name": p["name"], "type": p["type"], "models": p["models"],
+               "src": src_of.get(p.get("confidence"), "old")}
+        if p["designation"] in figs: rec["figs"] = sorted(set(figs[p["designation"]]))
+        if p["designation"] in vardep: rec["vardep"] = 1
+        if p.get("price"): rec["price"] = p["price"]
+        if p.get("description"): rec["desc"] = p["description"][0]
+        if p.get("photos"): rec["photo"] = p["photos"][0]["f"]["src"]  # kept as a reference only; the client shows no part photos
+        if p.get("oldUrl"): rec["url"] = p["oldUrl"]
+        out.append(rec)
+    return out
+
 data = {
     "company": {"brand": "Реверс-редуктор", "tagline": "Судовое оборудование", "operator": "ООО «Дело»",
                 "inn": "2225060059", "kpp": "222501001", "ogrn": "1032202271309",
@@ -90,6 +117,8 @@ data = {
     "models": out_models, "parts": out_parts, "section": section, "nodes": out_nodes,
     # revision 3: unit prices from the old store (2025 price list) by designation, and the РР-300 catalog scans for the archive
     "prices": {p["designation"]: p["price"] for p in parts if p.get("price")},
+    # revision 5: one unified parts catalog, one record per designation (no duplicates across models)
+    "catalog": unified_catalog(),
     "scans": [{"n": x["n"], "title": x["title"], "t": asset(x["t"]["src"]), "f": asset(x["f"]["src"])} for x in load("scans.json")],
 }
 
