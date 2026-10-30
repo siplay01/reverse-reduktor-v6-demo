@@ -137,3 +137,9 @@ Start: copy of `c-r10/` (tag `before-c-r11`).
 - Phone (iPhone Safari = WebKit, 390/375/360): compact header (no sub-line, short strip), card pictures 190 px high, 44 px touch targets for crumbs, links and small buttons, tiles grid `minmax(0,1fr)`, parts tables scroll inside their own box (a stray absolutely positioned cell was widening the page), node grid `min-width: 0`.
 Checks: `node qa/test-c-r11.cjs`, `node qa/test-c-r11-catalog.cjs`, axe 0 violations on 7 pages light+dark, sweep of 10 pages x 10 widths (1920 to 360) in Chromium and WebKit: no horizontal overflow, no page errors.
 Rollback: `git rm -r c-r11` or `git checkout before-c-r11 -- .`
+
+## 2026-10-29 · C revision 12 (`c-r12/`), parts instead of a gearbox box
+
+Start: copy of `c-r11/` (tag `before-c-r12`). Dmitry: the previous placeholder drawing read as «чемодан с ручкой». The one placeholder picture is now loose machine parts as line art on the blueprint grid: two meshing gears (one with lightening holes), a ball bearing, a toothed friction disc, a splined shaft with a nut, three bolts, and the large «КАРТИНКА СКОРО БУДЕТ» between them. Same picture everywhere (cards, tiles, node pages). Generic shapes. Changed: `soonArt` and the gear path helper in `c-r12/app.js`, a few rules at the end of `c-r12/style.css`.
+Checks: `node qa/test-c-r12.cjs`, `node qa/test-c-r12-catalog.cjs`, axe, overflow sweep.
+Rollback: `git rm -r c-r12` or `git checkout before-c-r12 -- .`
