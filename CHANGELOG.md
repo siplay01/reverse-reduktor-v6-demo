@@ -104,3 +104,9 @@ Checks: `node qa/test-c-r2.cjs` (Chromium + WebKit) passed; `node qa/axe.cjs` 0 
 - C revision 1 (`c-r1/`): C layout with the «Naval Authority» skin; light only (fixes Naval colours on a Mac in dark mode); 3Д6 photo from the old store.
 - C (`c/`): layout from Dmitry's four reference screenshots.
 - A, B: first two demo styles.
+
+## 2026-10-29 · C revision 8 (`c-r8/`), services section
+
+Start: copy of `c-r7/` (tag `before-c-r8`). The navy services band and the separate documentation strip are replaced by one section `.sv8`: 35/65 panels, pale blue-gray intro (label, heading, gold rule, RKO text, faint РР-300 section drawing from the manual), five numbered link rows, and the «Техническая документация» line inside the right panel (links to the existing `#arhiv` page, which lists the real files). Rows link to `#kontakty` (no per-service pages exist). Contrast tweaks to the brief colours: eyebrow #8a5a1f, intro text #4f6378, numbers 19 px.
+Checks: `node qa/test-c-r8.cjs` (Chromium + WebKit; 1920/1440/768/390/375 overflow, 35% split, links, archive file links 200, no console errors).
+Rollback: `git rm -r c-r8` or `git checkout before-c-r8 -- .`
