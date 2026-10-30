@@ -9,7 +9,8 @@ ordering info at the bottom of the first page.
 - `b/` «Инженерный пульт»: fixed left rail with tabs and contacts, IBM Plex Sans/Mono, steel and cobalt, blueprint search console as first screen, 4-across tiles, picker with a thumbnail filmstrip of the 26 nodes.
 - `c/` «Морской штаб» (Dmitry's references, 2026-10-29): navy strip + white header with nav and «Список запроса», navy hero with the owner's РР-300 photo, horizontal model cards (photo | data | «Запчасти»/«Характеристики»), services, certificate panel, ordering/tenders/requisites/contacts, footer. Catalog in the auto-parts structure: filter bar (model switch, node/group select, search in all catalogs), node index with thumbnails, node page with drawing beside the specification, variant selector (quantity per исполнение, dashes = not included), «Сравнить все исполнения», mass, footnotes, prev/next. Own engine `c/app.js`.
 - `c-r1/` C revision 1 (2026-10-29): C's markup and engine unchanged (`c-r1/index.html` loads `../c/app.js`), only `c-r1/style.css` differs: the «Naval Authority» skin from `~/Downloads/reduktor_v5_design_lab.html` (porcelain #f5f5f2, white panels, navy #102b3a strip and hero, bronze #b78e5a, action #174758, 15 px base, 13 px nav, 11 px tracked labels, 3 px radius). Light only, like the lab page (`color-scheme: light`), so a Mac in dark mode still shows the Naval palette. `c/` is kept as the previous state.
-- `index.html`: chooser between A, B, C and C revision 1.
+- `c-r2/` C revision 2 (2026-10-29): Dmitry's content corrections on top of revision 1 (own copies of markup, style and engine). Every step and the rollback commands: `CHANGELOG.md`.
+- `index.html`: chooser between A, B, C and its revisions.
 - `shared/schema.js`: part groups and the generic group diagram, used by all three.
 - `shared/app.js`: one engine for both (hash routes, picker, drawing/list sync, search, request list). `shared/data.js` is generated.
 
@@ -29,6 +30,7 @@ python3 -m http.server 4340          # open http://localhost:4340/
 node qa/test.cjs                     # functional A and B, Chromium + WebKit
 node qa/test-c.cjs                   # functional C, Chromium + WebKit
 DESIGN=c-r1 node qa/test-c.cjs       # same checks on C revision 1
+node qa/test-c-r2.cjs                # revision 2 (corrections + catalog), Chromium + WebKit
 node qa/axe.cjs                      # axe WCAG 2.2 AA, light + dark
 node qa/shots.cjs ab home,m/3d6      # screenshots + overflow check at 1440 and 390 into qa/shots/
 ```
