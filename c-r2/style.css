@@ -401,3 +401,12 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .cats span { color: var(--sub); font-size: 13px; }
 .mufta-contacts { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 700px) { .cats { grid-template-columns: 1fr; } }
+/* services, reorganised: a lead card for reverse-gear repair, the other four in a 2x2 grid */
+.svc-r2 { grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: auto auto; }
+.svc-r2 .svc-lead { grid-row: span 2; display: flex; flex-direction: column; padding: 36px 32px; }
+.svc-r2 .svc-lead h3 { font-size: clamp(22px, 2.2vw, 28px); line-height: 1.15; }
+.svc-r2 .svc-lead p { font-size: 15px; line-height: 1.6; margin-top: 12px; }
+.svc-r2 .svc-lead .btn { margin-top: auto; align-self: flex-start; background: #fff; color: var(--ink); border-color: #fff; }
+.svc-r2 li:not(.svc-lead) { min-height: 0; }
+@media (max-width: 1100px) { .svc-r2 { grid-template-columns: 1fr 1fr; } .svc-r2 .svc-lead { grid-row: auto; grid-column: 1 / -1; } .svc-r2 .svc-lead .btn { margin-top: 20px; } }
+@media (max-width: 700px) { .svc-r2 { grid-template-columns: 1fr; } }
