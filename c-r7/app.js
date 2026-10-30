@@ -305,9 +305,32 @@
   }
 
   let compare = false;
+  // r7: technical documentation archive, files grouped by type; each row: document, product, format, action
+  const ARCHIVE = [
+    ["Руководства по эксплуатации", [
+      { t: "Руководство по эксплуатации РР-300.РЭ", p: "РР-300", f: "PDF · 24 с. · 3,6 МБ", a: [["Открыть", D.manual.pdf, 1]] },
+    ]],
+    ["Каталоги деталей", [
+      { t: "Каталог деталей реверс-редуктора РР-300", p: "РР-300", f: `Сканы · ${D.scans.length} стр.`, a: [["Листать", "#arhiv/katalog-rr300"], ["Подбор по каталогу", "#katalog/rr-300"]] },
+      { t: "Каталог деталей реверс-редуктора 3Д6", p: "3Д6", soon: 1 },
+      { t: "Каталог деталей реверс-редуктора 3Д12", p: "3Д12", soon: 1 },
+      { t: "Каталог деталей муфт сцепления", p: "Муфта МС", soon: 1 },
+    ]],
+    ["Инструкции по ремонту", [
+      { t: "Инструкции по ремонту реверс-редукторов", p: "Реверс-редукторы", soon: 1 },
+    ]],
+  ];
+  function archivePage() {
+    const row = (d) => `<li${d.soon ? ' class="ar-soon"' : ""}><svg class="ar-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8l4.5 4.5v14.5H6z M14 2.5V7h4.5"/></svg>` +
+      `<span class="ar-t">${esc(d.t)}</span><span class="ar-p">${esc(d.p)}</span><span class="ar-f">${d.soon ? '<span class="badge">В подготовке</span>' : esc(d.f)}</span>` +
+      `<span class="ar-a">${(d.a || []).map(([l, h, ext]) => `<a class="btn ${ext ? "btn-line " : ""}btn-sm" href="${h}"${ext ? ' target="_blank" rel="noopener"' : ""}>${l}</a>`).join("")}</span></li>`;
+    return crumbs([["Техническая документация"]]) + head1("Техническая документация", "", "Каталоги и руководства. Новые документы добавляются по мере подготовки.") +
+      ARCHIVE.map(([g, items]) => `<section class="ar-group"><h2>${esc(g)}</h2><ul class="ar-list">${items.map(row).join("")}</ul></section>`).join("");
+  }
+
   // archive: scanned pages of the РР-300 parts catalog
   function scansPage() {
-    return crumbs([["Техническая документация", "#dokumenty"], ["Каталог деталей РР-300"]]) +
+    return crumbs([["Техническая документация", "#arhiv"], ["Каталог деталей РР-300"]]) +
       `<header class="cat-head compact"><h1 tabindex="-1">Каталог деталей РР-300: сканы страниц</h1><p class="muted">${D.scans.length} страниц. Нажмите страницу, чтобы открыть её в полном размере.</p></header>
       <ul class="scans">${D.scans.map((x) => `<li><a href="${x.f}" target="_blank" rel="noopener"><img src="${x.t}" width="420" height="305" alt="Страница ${x.n}: ${esc(x.title)}" loading="lazy"><span><b>${x.n}</b> ${esc(x.title)}</span></a></li>`).join("")}</ul>`;
   }
@@ -315,7 +338,7 @@
   function renderCat(path, qs) {
     const box = $("[data-cat]"), [, slug, key] = path, q = qs.get("q") || "", hl = qs.get("hl") || "";
     let html;
-    if (path[0] === "arhiv") html = scansPage();
+    if (path[0] === "arhiv") html = path[1] === "katalog-rr300" ? scansPage() : archivePage();
     else if (path[0] === "katalog" && !slug) html = catsPage();
     else if (path[0] === "katalog" && slug === "mufta-ms") html = muftaPage();
     else if (path[0] === "katalog" && slug !== "vse" && path[2] !== "spisok" && model(slug)) html = indexPage(model(slug));
