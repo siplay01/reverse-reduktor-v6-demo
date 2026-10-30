@@ -153,3 +153,14 @@ Start: copy of `c-r12/` (tag `before-c-r13`). Dmitry: the two books are public o
 - Not applied: the clutch figure is not put on the «Муфта сцепления МС» card (whether it is the same clutch as СБ1226-00-2 is unconfirmed). No source notes on the pages (client rule); sources: 3Д6 book (Vershinina, Trumul, 1972) pp. 29 and 33, Д12 РЭ p. 104.
 Checks: `node qa/test-c-r13.cjs`, `-catalog.cjs`, `-gears.cjs` (Chromium + WebKit), axe 0 violations on 3 pages, 10-page x 10-width sweep without overflow or errors.
 Rollback: `git rm -r c-r13` or `git checkout before-c-r13 -- .`
+
+## 2026-10-29 · C revision 14 (`c-r14/`), engineering accents
+
+Start: copy of `c-r13/` (tag `before-c-r14`). One enhanced version, structure and content unchanged (the brief asked for 3-5 concepts in one paragraph and one enhanced version in the next; the later, stricter instruction was followed).
+- Hero: the РР-300 section drawing from the manual, inverted and faded to 9 percent behind the headline (masked toward the photo), plus a drafting centre line, scale ticks and a registration mark below the buttons. Real asset: `assets/rr300-section-2400.webp`. Derived: `c-r14/img/draft-marks.svg`.
+- Model range: the РР-300 front view (flange, bolt circle) as a large cropped accent at the top right of the section, 14 percent, multiply, fading out under the first card. Real asset: `assets/rr300-front-1200.webp`.
+- Services: unchanged (propeller and reducer blueprint already approved).
+- Documentation page header: the РР-300 section at the right of the header band, 20 percent. Spare parts landing header: a derived gear train (two meshing gears, pitch circles, centre lines, dimension lines without numbers) `c-r14/img/gear-train-dark.svg` (a white twin `gear-train-light.svg` is ready for dark areas).
+- Headers `art-doc` and `art-gear` are 176 px minimum height so the drawings read; `head1()` takes an optional class. Phones: accents shrink and fade, no overflow.
+Checks: `node qa/test-c-r14.cjs`, `-catalog.cjs`, `-gears.cjs`, axe 0 violations on 4 pages, 10-page x 10-width sweep in Chromium and WebKit.
+Rollback: `git rm -r c-r14` or `git checkout before-c-r14 -- .`
