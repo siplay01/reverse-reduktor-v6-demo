@@ -594,3 +594,25 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .mcard-sm .mcard-btns { margin-top: 12px; }
 @media (max-width: 900px) { .models-sm { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .mcard-sm { grid-template-columns: 130px 1fr; } .mcard-sm .mcard-pic { min-height: 130px; aspect-ratio: auto; } .mcard-sm .mcard-body { padding: 14px; } .mcard-sm .mcard-h { font-size: 19px; } }
+/* services: navy band (references: ZF Marine aftersales, Transmission Marine «Our Services»): statement + contact, five equal icon cards */
+.sec5-svc { position: relative; overflow: hidden; background: var(--hero); color: #fff; padding: 80px 0; }
+.sec5-svc::after { content: ""; position: absolute; right: -80px; top: -40px; width: 620px; height: 580px; background: url(../assets/rr300-section-1200.webp) center / contain no-repeat; filter: invert(1); opacity: .06; pointer-events: none; }
+.sec5-svc .wrap { position: relative; z-index: 1; }
+.sv5-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: end; margin-bottom: 40px; }
+.sv5-head h2 { font-size: clamp(26px, 3vw, 40px); max-width: 18ch; }
+.sv5-side p { color: var(--hero-muted); font-size: 14px; line-height: 1.7; max-width: 46ch; }
+.sv5-cta { display: flex; gap: 10px; margin-top: 18px; }
+.sec5-svc .btn-white { background: #fff; color: var(--ink); border-color: #fff; }
+.sec5-svc .btn-line { background: transparent; color: #fff; border-color: #ffffff8a; }
+.sv5 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: #ffffff1f; border: 1px solid #ffffff1f; }
+.sv5 li { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 28px 22px 32px; background: var(--hero); min-height: 220px; }
+.sv5 li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+.sv5 li:hover { background: #143446; }
+.sv5 li:hover::before { transform: scaleX(1); }
+.sv5-ico { width: 58px; height: 58px; display: grid; place-items: center; border: 1px solid var(--accent); border-radius: 50%; }
+.sv5-ico svg { width: 30px; height: 30px; fill: none; stroke: var(--tone); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sv5-n { font-size: 12px; font-weight: 800; color: var(--tone); letter-spacing: .1em; margin-top: auto; }
+.sv5 h3 { font-size: 17px; line-height: 1.3; letter-spacing: -.01em; }
+@media (prefers-reduced-motion: no-preference) { .sv5 li, .sv5 li::before { transition: background-color .2s, transform .25s; } }
+@media (max-width: 1100px) { .sv5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .sv5 li:first-child { grid-column: 1 / -1; min-height: 0; } .sv5-head { grid-template-columns: 1fr; gap: 18px; } }
+@media (max-width: 700px) { .sec5-svc { padding: 50px 0; } .sv5 { grid-template-columns: 1fr; } .sv5 li { flex-direction: row; align-items: center; min-height: 0; padding: 18px; gap: 14px; } .sv5-n { display: none; } .sv5-ico { flex: none; width: 46px; height: 46px; } .sv5-ico svg { width: 24px; height: 24px; } .sv5 h3 { font-size: 16px; } }
