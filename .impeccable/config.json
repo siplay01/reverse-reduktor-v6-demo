@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "Reductor/v6-demo/a/index.html"
+        ],
+        "createdAt": "2026-10-29T22:57:07.166Z",
+        "reason": "Claude: static-file false positive; .strip has min-height 34px with centred text and .svc li has 32px side padding; rendered scan of /a/ reports no cramped-padding"
+      },
+      {
+        "rule": "codex-grid-background",
+        "value": "*",
+        "files": [
+          "Reductor/v6-demo/b/style.css"
+        ],
+        "createdAt": "2026-10-29T22:57:07.191Z",
+        "reason": "Claude: B console is a literal blueprint surface over a manual drawing, the sanctioned use"
+      },
+      {
+        "rule": "hero-eyebrow-chip",
+        "value": "*",
+        "files": [
+          "Reductor/v6-demo/c/index.html"
+        ],
+        "createdAt": "2026-10-29T23:33:55.883Z",
+        "reason": "Dmitry's reference screenshot (2026-10-29) has this exact eyebrow above the hero h1 and he asked for that hero"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "Reductor/v6-demo/c/index.html"
+        ],
+        "createdAt": "2026-10-29T23:33:55.901Z",
+        "reason": "Claude: static-file false positive; .strip has min-height 40px with centred text, .svc li+li has 24px left padding; rendered scan of /c/ reports no cramped-padding"
+      }
+    ]
+  }
+}

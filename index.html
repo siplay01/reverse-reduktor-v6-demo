@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<title>Реверс-редуктор · два варианта демо</title>
+<style>
+:root { --bg: #f3f4f6; --card: #fff; --text: #111a24; --muted: #59636e; --line: #d6dae0; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0e141b; --card: #16202a; --text: #e5e9ee; --muted: #9aa6b2; --line: #2a3744; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+main { max-width: 900px; margin: 0 auto; padding: 48px 16px; }
+h1 { font-size: 28px; margin: 0 0 8px; }
+p { color: var(--muted); margin: 0 0 24px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+a { display: block; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; color: inherit; text-decoration: none; }
+a:hover { border-color: #1c4fd6; }
+a b { display: block; font-size: 20px; margin-bottom: 6px; }
+a span { color: var(--muted); font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Реверс-редуктор: варианты дизайна</h1>
+  <p>Одинаковое содержание и подбор деталей по схеме, разная подача.</p>
+  <div class="grid">
+    <a href="a/"><b>A · Деловой реестр</b><span>Классическая шапка с вкладками, синий и бронза, карточки 2×2, подбор в три колонки.</span></a>
+    <a href="b/"><b>B · Инженерный пульт</b><span>Боковое меню, поиск на чертеже, четыре плитки в ряд, лента узлов с миниатюрами.</span></a>
+    <a href="c/"><b>C · Морской штаб</b><span>Тёмно-синий сайт с белой шапкой, горизонтальные карточки с фото, каталог с фильтрами и исполнениями.</span></a>
+    <a href="c-r1/"><b>C · ревизия 1 (Naval)</b><span>Та же структура, что у C, во внешнем виде Naval Authority: светлый фон, белые панели, синий и бронза.</span></a>
+  </div>
+</main>
+</body>
+</html>

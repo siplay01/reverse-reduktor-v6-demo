@@ -1,0 +1,15 @@
+// axe-core WCAG 2.2 AA scan of key views, light and dark. Server on :4340.
+const path = require('path'), nm = path.join(__dirname, '../../v5-ab/node_modules/');
+const { chromium } = require(nm + 'playwright'); const { AxeBuilder } = require(nm + '@axe-core/playwright');
+const A = ['', '#m/rr-300/obshchiy', '#m/rr-300/ris-5', '#m/3d6/gr-2', '#zapchasti', '#dokumenty'];
+const C = ['', '#katalog/rr-300', '#katalog/3d6', '#m/rr-300/obshchiy', '#m/rr-300/ris-3', '#m/3d6/gr-2'];
+(async () => {
+  const b = await chromium.launch(); let bad = 0;
+  for (const scheme of ['light', 'dark']) for (const [v, rs] of [['a', A], ['b', A], ['c', C], ['c-r1', C]]) for (const r of rs) {
+    const p = await (await b.newContext({ colorScheme: scheme })).newPage();
+    await p.goto(`http://localhost:4340/${v}/${r}`); await p.waitForTimeout(300);
+    const res = await new AxeBuilder({ page: p }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    for (const x of res.violations) { bad++; console.log(scheme, v, r || 'home', x.id, x.nodes.length, x.nodes[0].target.join(' '), x.nodes[0].failureSummary.split('\n')[1]); }
+  }
+  console.log('violations', bad); await b.close();
+})();
