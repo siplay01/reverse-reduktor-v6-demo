@@ -5,7 +5,7 @@ const A = ['', '#m/rr-300/obshchiy', '#m/rr-300/ris-5', '#m/3d6/gr-2', '#zapchas
 const C = ['', '#katalog/rr-300', '#katalog/3d6', '#m/rr-300/obshchiy', '#m/rr-300/ris-3', '#m/3d6/gr-2'];
 (async () => {
   const b = await chromium.launch(); let bad = 0;
-  for (const scheme of ['light', 'dark']) for (const [v, rs] of [['a', A], ['b', A], ['c', C], ['c-r1', C], ['c-r2', ['', '#katalog', '#katalog/mufta-ms', '#katalog/rr-300', '#m/rr-300/ris-3', '#m/3d6/gr-2']], ['c-r3', ['', '#katalog', '#katalog/mufta-ms', '#m/rr-300/ris-3', '#m/3d6/vse', '#arhiv/katalog-rr300']], ['c-r4', ['', '#katalog', '#katalog/3d6', '#m/3d6/vse', '#katalog/rr-238', '#katalog/mufta-ms']], ['c-r5', ['', '#katalog', '#katalog/rr-300', '#katalog/3d6?q=525', '#m/rr-300/ris-3', '#katalog/mufta-ms']]]) for (const r of rs) {
+  for (const scheme of ['light', 'dark']) for (const [v, rs] of [['a', A], ['b', A], ['c', C], ['c-r1', C], ['c-r2', ['', '#katalog', '#katalog/mufta-ms', '#katalog/rr-300', '#m/rr-300/ris-3', '#m/3d6/gr-2']], ['c-r3', ['', '#katalog', '#katalog/mufta-ms', '#m/rr-300/ris-3', '#m/3d6/vse', '#arhiv/katalog-rr300']], ['c-r4', ['', '#katalog', '#katalog/3d6', '#m/3d6/vse', '#katalog/rr-238', '#katalog/mufta-ms']], ['c-r5', ['', '#katalog', '#katalog/rr-300', '#katalog/3d6?q=525', '#m/rr-300/ris-3', '#katalog/mufta-ms']], ['c-r6', ['#katalog', '#katalog/rr-300', '#katalog/3d6', '#katalog/3d6/spisok', '#katalog/vse?q=525', '#m/rr-300/ris-3']]]) for (const r of rs) {
     const p = await (await b.newContext({ colorScheme: scheme })).newPage();
     await p.goto(`http://localhost:4340/${v}/${r}`); await p.waitForTimeout(300);
     const res = await new AxeBuilder({ page: p }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();

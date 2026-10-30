@@ -2,6 +2,18 @@
 
 Every revision lives in its own folder; older folders are never edited. Git history (local repo in this folder) records each step.
 
+## 2026-10-29 · C revision 6 (`c-r6/`), catalog and pictures restored
+
+Dmitry: «картинки и каталог должны были остаться, а ты их удалил». Revision 5 had removed the «Запасные части» catalog page, the per-gearbox pages with picture tiles and the picture beside the parts list. Start: exact copy of `c-r5/`. Baseline tag `before-c-r6`.
+
+| Step | What changed | Files |
+| --- | --- | --- |
+| 1 | Restored from r4: «Запасные части» page with the five catalogs (`#katalog`), per-gearbox pages with picture tiles (`#katalog/<model>`: РР-300 section, front view and 26 node drawings; «Чертёж скоро появится» tiles for РР-238, 3Д6, 3Д12), the picture beside the parts list (РР-300 drawing or the placeholder). Kept from r5: the unified list with filters, now at `#katalog/vse` (all) and `#katalog/<model>/spisok` (one gearbox, link «Все запчасти одним списком» on the catalog page); tiles «Все детали» and groups open that list. r5 list addresses redirect. | `c-r6/app.js`, `c-r6/style.css` |
+
+Checks: `node qa/test-c-r6.cjs` passed (Chromium + WebKit); `node qa/axe.cjs` 0 violations; no horizontal overflow at 390 and 1024 (WebKit); revision 5 test still passes.
+
+Rollback: older folders untouched; `git revert <commit>` or `git checkout before-c-r6 -- .`
+
 ## 2026-10-29 · C revision 5 (`c-r5/`), unified parts catalog
 
 Start: exact copy of `c-r4/`. Baseline tag `before-c-r5`. Brief: consolidate the four gearbox catalogs into one catalog, keep the site's look.
