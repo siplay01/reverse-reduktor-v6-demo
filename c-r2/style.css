@@ -410,3 +410,15 @@ dialog::backdrop { background: rgba(16,43,58,.45); }
 .svc-r2 li:not(.svc-lead) { min-height: 0; }
 @media (max-width: 1100px) { .svc-r2 { grid-template-columns: 1fr 1fr; } .svc-r2 .svc-lead { grid-row: auto; grid-column: 1 / -1; } .svc-r2 .svc-lead .btn { margin-top: 20px; } }
 @media (max-width: 700px) { .svc-r2 { grid-template-columns: 1fr; } }
+/* footer, reorganised: contacts, sections, catalogs, requisites */
+.foot-r2 { padding: 48px 0 44px; }
+.foot-grid { display: grid; grid-template-columns: 1.3fr .8fr .8fr 1.4fr; gap: 32px; }
+.foot-contact p + p { margin-top: 2px; }
+.foot-phone { margin-top: 12px !important; font-size: 20px; font-weight: 750; letter-spacing: -.02em; }
+.foot-phone a { color: var(--ink); }
+.foot-r2 .req { padding: 0; background: none; font-size: 12px; line-height: 1.6; margin-bottom: 8px; }
+.foot-r2 .req div { grid-template-columns: 6.5em 1fr; padding: 1px 0; }
+.foot-r2 .req dd { font-size: 12px; color: var(--ink); }
+.foot-r2 .linkish { font-size: 12px; min-height: 24px; }
+@media (max-width: 1100px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) { .foot-grid { grid-template-columns: 1fr; gap: 24px; } }
