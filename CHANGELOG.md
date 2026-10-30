@@ -128,3 +128,12 @@ Start: copy of `c-r9/` (tag `before-c-r10`).
 - TEST: the РР-300 manual section drawing is the main picture of the «Гидравлический реверс-редуктор» (new development) card. Switch off: `USE_RR300_DRAWING = false` at the top of the product section of `c-r10/app.js`, or open the page with `?rr300pic=0` (`?rr300pic=1` = on). Off shows the drawn hydraulic schematic.
 Checks: `node qa/test-c-r10.cjs` (Chromium + WebKit, 1920/1440/768/390/375), `node qa/test-c-r10-catalog.cjs` (r7 regression: catalog, search, archive), axe light + dark 0 violations on 6 pages.
 Rollback: `git rm -r c-r10` or `git checkout before-c-r10 -- .`
+
+## 2026-10-29 · C revision 11 (`c-r11/`), type, one placeholder, phone
+
+Start: copy of `c-r10/` (tag `before-c-r11`).
+- Placeholder: ONE picture everywhere a photo or drawing is missing (product cards for the clutch and the new hydraulic reverse, spare-part group tiles, node pages, lists, compact cards): faint gear-box schematic on a blueprint grid with large «КАРТИНКА / СКОРО БУДЕТ». The drawn clutch and hydraulic schematics are gone. The РР-300 picture test is now OFF by default (`?rr300pic=1` turns it on).
+- Type: every font-size under 15 px raised (10→12, 11→13, 12→14, 13→15, 14→15); header strip 14 px, brand 20 px, nav 16.5 px / 650, list button 16 px; burger menu now from 1240 px.
+- Phone (iPhone Safari = WebKit, 390/375/360): compact header (no sub-line, short strip), card pictures 190 px high, 44 px touch targets for crumbs, links and small buttons, tiles grid `minmax(0,1fr)`, parts tables scroll inside their own box (a stray absolutely positioned cell was widening the page), node grid `min-width: 0`.
+Checks: `node qa/test-c-r11.cjs`, `node qa/test-c-r11-catalog.cjs`, axe 0 violations on 7 pages light+dark, sweep of 10 pages x 10 widths (1920 to 360) in Chromium and WebKit: no horizontal overflow, no page errors.
+Rollback: `git rm -r c-r11` or `git checkout before-c-r11 -- .`
