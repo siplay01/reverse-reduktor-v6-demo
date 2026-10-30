@@ -2,6 +2,22 @@
 
 Every revision lives in its own folder; older folders are never edited. Git history (local repo in this folder) records each step.
 
+## 2026-10-29 · C revision 5 (`c-r5/`), unified parts catalog
+
+Start: exact copy of `c-r4/`. Baseline tag `before-c-r5`. Brief: consolidate the four gearbox catalogs into one catalog, keep the site's look.
+
+| Step | What changed | Files |
+| --- | --- | --- |
+| data | `RR.catalog`: one record per designation (307), with `models` (associations as recorded), `src` (factory = РР-300 catalog table checked against the scan, ocr = РР-300 catalog index by OCR, old = revers-remont.ru store, sister = revers-reduktor.ru), `figs` (РР-300 catalog figures), `vardep` (quantity differs between РР-300 variants), and the existing description, photo reference and old URL. `RR.parts` stays for older revisions. | `build.py`, `shared/data.js` |
+| 1, 1b | One catalog page `#katalog[/<model>][?g=&q=]` with filters «По редуктору» (Все, РР-300, РР-238, 3Д6, 3Д12), «По группе деталей» (only groups that have parts, with counts), «Поиск» (designation with or without hyphens, name), «Сбросить фильтры». Column «Применяемость»: model labels, links to the РР-300 drawing (рис. N), «зависит от исполнения», «уточните при заказе» for multi-model records. Product cards and the «Запасные части» tab open this page (cards pre-filtered); the chooser and per-model index pages are gone. РР-300 drawing pages kept; their search sends the query to the list; «Чертежи узлов РР-300» available as a collapsed strip on the РР-300 filter. Old `#m/<model>/vse` and `#m/<model>/gr-N` addresses redirect to the list. Clutch page unchanged. | `c-r5/app.js`, `c-r5/style.css` |
+
+Evidence used: the РР-300 manual РР-300.РЭ (`v5-ab/public/docs/rr300-rukovodstvo.pdf`, byte-identical to the owner file «Руководство РР300 А4.pdf»), the РР-300 parts catalog tables (scans), the recovered data of revers-remont.ru and revers-reduktor.ru, and the earlier research notes (`~/Downloads/reducer_source_research_2026-10-29/research-findings.md`, which lists НЕВА-дизель as a reference; not re-fetched in this step).
+No part-level interchangeability is confirmed by these documents: the 18 multi-model records keep their recorded associations and carry «уточните при заказе». The manual confirms whole-unit facts only (РР-300 for diesels 3Д6, 3Д12, ДРА150/Я1, ДРА300/Я2; mounting interchangeable with the discontinued mechanical gearboxes of 3Д6/3Д6Н/3Д12; 16- or 20-finger coupling by engine).
+
+Checks: `node qa/test-c-r5.cjs` passed (Chromium + WebKit); `node qa/axe.cjs` 0 violations; no horizontal overflow at 390 and 1024 (WebKit); revision 4 test still passes.
+
+Rollback: older folders untouched; one step: `git revert <commit>`; everything: `git checkout before-c-r5 -- .`
+
 ## 2026-10-29 · C revision 4 (`c-r4/`), Dmitry's third round
 
 Start: exact copy of `c-r3/`. Baseline tag `before-c-r4`.

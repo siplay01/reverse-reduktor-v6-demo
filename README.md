@@ -12,6 +12,7 @@ ordering info at the bottom of the first page.
 - `c-r2/` C revision 2 (2026-10-29): Dmitry's content corrections on top of revision 1 (own copies of markup, style and engine). Every step and the rollback commands: `CHANGELOG.md`.
 - `c-r3/` C revision 3 (2026-10-29): second round of corrections (catalog with price and quantity, coming-soon illustration, services tiles, documentation archive with the catalog scans). Steps and rollback: `CHANGELOG.md`.
 - `c-r4/` C revision 4 (2026-10-29): third round (РР-238 restored, neutral «скоро появится» placeholders, services as a vertical list, compact technical documentation). Steps and rollback: `CHANGELOG.md`.
+- `c-r5/` C revision 5 (2026-10-29): one unified parts catalog (`RR.catalog`) with filters by gearbox and group, search and applicability labels. Steps, evidence and rollback: `CHANGELOG.md`.
 - `index.html`: chooser between A, B, C and its revisions.
 - `shared/schema.js`: part groups and the generic group diagram, used by all three.
 - `shared/app.js`: one engine for both (hash routes, picker, drawing/list sync, search, request list). `shared/data.js` is generated.
@@ -35,6 +36,7 @@ DESIGN=c-r1 node qa/test-c.cjs       # same checks on C revision 1
 node qa/test-c-r2.cjs                # revision 2 (corrections + catalog), Chromium + WebKit
 node qa/test-c-r3.cjs                # revision 3, Chromium + WebKit
 node qa/test-c-r4.cjs                # revision 4, Chromium + WebKit
+node qa/test-c-r5.cjs                # revision 5 (unified catalog), Chromium + WebKit
 node qa/axe.cjs                      # axe WCAG 2.2 AA, light + dark
 node qa/shots.cjs ab home,m/3d6      # screenshots + overflow check at 1440 and 390 into qa/shots/
 ```
