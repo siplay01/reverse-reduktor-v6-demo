@@ -112,3 +112,9 @@ Checks: `node qa/test-c-r8.cjs` (Chromium + WebKit; 1920/1440/768/390/375 overfl
 Rollback: `git rm -r c-r8` or `git checkout before-c-r8 -- .`
 
 r8 fix: blueprint in the intro panel is now the drawing from the approved reference (`~/Downloads/engineering_services_blueprint_interface.png`, bottom of the left panel, cropped to its edges into `c-r8/blueprint.webp`), shown whole at panel width with a soft top fade. The first version used the manual section drawing with `object-fit: cover`, which cut it on every side.
+
+## 2026-10-29 · C revision 9 (`c-r9/`), soft schematics instead of «скоро» placeholders
+
+Start: copy of `c-r8/` (tag `before-c-r9`). The grey silhouette with a «СКОРО» watermark and pill is replaced by two light line schematics reusing the c-r3 drive-line drawing: `line` (engine, clutch, reverse gear, shafting) on the product cards, `gear` (reverse gearbox in section) everywhere spare parts have no photo or drawing (group tiles, node page, compact cards). Pale strokes, faint caption (hidden on small tiles, still read by screen readers). Generic schematics, not drawings of a real unit. Only `c-r9/app.js` (`soonArt`) and `c-r9/style.css` changed.
+Checks: `node qa/shot9.cjs` (screenshots, no overflow at 1440/390, no page errors), axe.
+Rollback: `git rm -r c-r9` or `git checkout before-c-r9 -- .`
