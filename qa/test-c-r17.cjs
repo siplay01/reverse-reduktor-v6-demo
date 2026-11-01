@@ -51,6 +51,18 @@ const U = (h = '') => `http://localhost:4340/c-r17/${h}`;
     await p.setViewportSize({ width: 390, height: 800 });
     for (const h of ['#katalog/3d6', '#m/3d6/ris-90', '#m/3d6/ris-94']) { await p.goto(U(h)); await p.waitForSelector('.tiles .tile, .node'); await p.waitForTimeout(200);
       assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'overflow on ' + h); }
+    // 9. iPhone Safari zooms the page when a focused field is under 16 px (it never zooms back): every field is 16 px on phones
+    for (const h of ['#katalog/vse', '#katalog/3d6/spisok', '#m/3d6/ris-89', '#m/rr-300/ris-5']) {
+      await p.goto(U(h)); await p.waitForSelector('[data-cat] h1'); await p.waitForTimeout(300);
+      const small = await p.evaluate(() => [...document.querySelectorAll('input:not([type=hidden]),select,textarea')].filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).length);
+      assert.equal(small, 0, 'fields under 16 px on ' + h);
+    }
+    // 10. narrowest phones (320 px): no horizontal overflow on the catalog, archive and clutch pages
+    await p.setViewportSize({ width: 320, height: 700 });
+    for (const h of ['', '#katalog/vse', '#katalog/3d6', '#m/3d6/ris-89', '#katalog/mufta-ms', '#arhiv']) {
+      await p.goto(U(h)); await p.waitForTimeout(300);
+      assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), '320 px overflow on ' + (h || 'home'));
+    }
     assert.deepEqual(errs, [], name + ' errors');
     await b.close(); console.log(name, 'ok');
   }
