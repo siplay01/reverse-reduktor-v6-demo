@@ -186,3 +186,17 @@ Start: copy of `c-r15/` (tag `before-c-r16`). Dmitry: the books are public opera
 - The Д12 file has a third-party library stamp on its first page (kachegaroff-line.ru). Both PDFs are scans without a text layer, so no text search inside them.
 Checks: `node qa/test-c-r16-docs.cjs` (both rows present, every PDF link answers 200), plus the r16 regression, catalog and gears tests; axe 0 violations; 10-page x 10-width sweep without overflow.
 Rollback: `git rm -r c-r16` or `git checkout before-c-r16 -- .` (the two PDFs in `assets/` stay; delete them separately if needed).
+
+## 2026-11-01 · C revision 17 (`c-r17/`), 3Д6 drawing catalog
+
+Start: copy of `c-r16/` (tag `before-c-r17`). Source: `~/Downloads/Reductor/Корпус реверс.docx 3д6.docx` (3Д6 parts catalog: 10 exploded views, Рис. 89-98, and 10 part tables). Dmitry: the data exists, the pictures were missing; use the drawings.
+- «Запчасти 3Д6» now looks like РР-300: tiles with the 10 drawings (Корпус, Реверсивная муфта, Ролик включения, Бугель, Вилка включения, Ведущая шестерня переднего хода, Шестерня и крышка заднего хода, Выходной вал, Задняя крышка, Промежуточная шестерня), «Все детали», node select in the filter bar. Each drawing page = picture + table (position, designation, name, quantity, price, «В запрос»), variant selector 3Д6 / 3Д6Л / 3Д6С / 3Д6СЛ, «Все исполнения», previous/next, zoom. Same page code as РР-300 (`nodePage(m, nd)` now takes the model).
+- Table columns used: only the four 3Д6-family columns (the file's eight other columns, 1Д6... and 7Д6..., are empty in every row; checked by the build script). OKP codes dropped (partly garbled in the scan).
+- Catalog: 70 new designations, 13 existing РР-300/3Д12 designations that the 3Д6 catalog also lists now carry 3Д6 (list shows «уточните при заказе»), 77 parts link to their drawing («рис. N»). Total 307 -> 377, 3Д6 82 -> 165. Existing names kept where the designation was already in the catalog.
+- Scan errors fixed only where certain: designation of the forward gear on Рис. 94 (525М-24, lost in the scan; its pair 525М-24-1 is in the file), footnote marks «\1/\2» = ratios 1:3,07 / 1:2,02 (Рис. 94, 96), «Шпилька Ш2х67» -> М12х67, «Болт М8х6» -> М8х16 (same designation 556-05 elsewhere), «MI2X35» -> М12х35, «Шарик 5 им» -> 5 мм, «Валка включения» -> Вилка включения (old catalog name), Latin letters in designations -> Cyrillic. To confirm with the owner: 525-16-4 name and the М12х67 stud size.
+- Documentation archive: «Каталог деталей реверс-редуктора 3Д6» is no longer «В подготовке», it opens the selection.
+- Accessibility: the colour for parts not in the chosen variant (`--na`) darkened #98a3a9 -> #66737a, opacity removed from the price cell (contrast failed with many such rows).
+- Not done: clickable callouts on the drawings (the numbers are on the pictures, the table is matched by position), cutting single parts out of the views (client rule: drawings only, no part photos).
+Checks: `node qa/test-c-r17.cjs` (Chromium + WebKit: data, 11 tiles with pictures, 10 pages, variants, footnotes, links, order list, archive, РР-300 untouched, no overflow at 390 px), axe 0 violations on 5 pages light and dark, gitleaks clean.
+Rollback: `git rm -r c-r17 build_3d6.py qa/test-c-r17.cjs` or `git checkout before-c-r17 -- .`
+
